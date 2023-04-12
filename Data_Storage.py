@@ -15,7 +15,6 @@ class Data():
         '''
         TODO: Decide if even needed
         '''
-        
         return processed_data
     
 #d = Data()
