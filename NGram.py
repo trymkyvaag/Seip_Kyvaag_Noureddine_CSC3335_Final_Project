@@ -9,7 +9,7 @@ from copy import deepcopy
 import json
 import pandas as pd
 
-BASE_TALLY = {'not_cyberbullying': 0, 'gender': 0, 'religion': 0, 'other_cyberbulling': 0, 'age': 0, 'ethnicity': 0}
+BASE_TALLY = {'not_cyberbullying': 0, 'gender': 0, 'religion': 0, 'other_cyberbullying': 0, 'age': 0, 'ethnicity': 0}
 
 def incrementValue(theDict: dict, key: str, initialValue: int = 0):
     if(theDict.get(key) == None):
