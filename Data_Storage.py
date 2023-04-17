@@ -18,4 +18,4 @@ class Data():
         
         return processed_data
     
-#d = Data()
+d = Data()
