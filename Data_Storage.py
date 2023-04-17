@@ -6,6 +6,7 @@ class Data():
     def __init__(self) -> None:
         self.ds_1 = pd.read_csv('data/cyberbullying_tweets.csv')
         self.ds_2 = pd.read_csv('data/FinalBalancedDataset.csv')
+        self.combined_tweets = pd.concat([self.ds_1['tweet_text'], self.ds_2['tweet']], ignore_index=True)
         print(self.ds_2.head())
         self.processed_Data = self.__process_data__()
 
