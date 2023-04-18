@@ -6,7 +6,8 @@ class Data():
     def __init__(self) -> None:
         self.ds_1 = pd.read_csv('data/cyberbullying_tweets.csv')
         self.ds_2 = pd.read_csv('data/FinalBalancedDataset.csv')
-        #print(self.ds_2.head())
+        self.combined_tweets = pd.concat([self.ds_1['tweet_text'], self.ds_2['tweet']], ignore_index=True)
+        print(self.ds_2.head())
         self.processed_Data = self.__process_data__()
 
     #This needs to make sets make sense in comparison
@@ -17,8 +18,4 @@ class Data():
         '''
         return processed_data
     
-    def return_raw_sets(self):
-        return [self.ds_1, self.ds_2]
-        
-    
-#d = Data()
+d = Data()

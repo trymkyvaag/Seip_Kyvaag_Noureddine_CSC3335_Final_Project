@@ -39,7 +39,8 @@ class TA:
     def __init__(self) -> None:
         self.data = Data()
         self.data_sets = self.data.return_raw_sets()
-        print(self.data_sets[0].head())
+        #print(self.data_sets[0].head())
+        print(stop_words)
         pass
 
     def train_data(self):
