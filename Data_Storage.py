@@ -15,6 +15,10 @@ class Data():
         self.ltzr = WordNetLemmatizer()
         self.load_concatenated_tweets()
         self.load_parsed_tweets()
+        
+        # Defines column labels.
+        self.PARSED_TWEET = 'Text'
+        self.PARSED_LABEL = 'Annotation'
         #self.parsed_tweets.style.set_properties(**{'text-align': 'left'})
         
 
