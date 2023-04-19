@@ -31,7 +31,7 @@ stop_words = stopwords.words('english')
 '''
 With or without rt???
 '''
-stop_words.extend(['from', 'subject', 're', 'edu', 'use', 'rt'])
+stop_words.extend(['from', 'subject', 're', 'edu', 'use'])
 
 from Data_Storage import Data
 
