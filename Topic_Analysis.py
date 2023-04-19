@@ -38,7 +38,7 @@ from Data_Storage import Data
 class TA:
     def __init__(self) -> None:
         self.data = Data()
-        self.data_sets = self.data.return_raw_sets()
+        self.data.load_concatenated_tweets()
         #print(self.data_sets[0].head())
         print(stop_words)
         pass

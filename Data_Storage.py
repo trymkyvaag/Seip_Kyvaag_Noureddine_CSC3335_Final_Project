@@ -83,7 +83,7 @@ class Data():
 
         hashtags = []
 
-        for word in words
+        for word in words:
             if(word.startswith('#')):
                 hashtags.append(word)
         
