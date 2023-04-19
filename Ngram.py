@@ -33,7 +33,7 @@ class ngram_class():
     def __init__(self, ta: TA) -> None:
         self.ta_class = ta
         self.__create_ngrams__()
-        self.__create_ngrams__()
+        self.__clean__()
         
 
         # Define functions for stopwords, bigrams, trigrams and lemmatization
