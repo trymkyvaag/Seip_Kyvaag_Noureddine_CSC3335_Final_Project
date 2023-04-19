@@ -37,14 +37,26 @@ from Data_Storage import Data
 
 class TA:
     def __init__(self) -> None:
-        self.data = Data()
-        self.data.load_parsed_tweets()
-        #print(self.data_sets[0].head())
-        print(stop_words)
+        self.data_class = Data()
+        self.__toakanize__()
+        #print(self.data_class.parsed_tweets['Text'])
+        #print(stop_words)
+        #print(self.toakanized_data[5])
         pass
+
+
+    def __toakanize__(self):
+        self.toakanized_data = list(self.tweets_to_words())
+        
 
     def train_data(self):
         pass
+
+    #https://www.machinelearningplus.com/nlp/topic-modeling-gensim-python/
+    def tweets_to_words(self):
+        for tweet in self.data_class.parsed_tweets['Text']:
+                yield(gensim.utils.simple_preprocess(str(tweet)))
+
         
 def test():
     ta = TA()
