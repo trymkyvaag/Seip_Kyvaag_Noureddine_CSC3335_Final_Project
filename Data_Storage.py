@@ -1,6 +1,7 @@
 import re
 import pandas as pd
 import numpy as np
+pd.options.mode.chained_assignment = None
 
 #Lemmatizer (change word form. Better -> Good, Houses -> House)
 from nltk.stem import WordNetLemmatizer
@@ -12,37 +13,38 @@ class Data():
     def __init__(self) -> None:
         self.stopwords = sw.words('english')
         self.ltzr = WordNetLemmatizer()
+        self.load_concatenated_tweets()
+        self.load_parsed_tweets()
+        #self.parsed_tweets.style.set_properties(**{'text-align': 'left'})
+        
 
     def load_concatenated_tweets(self) -> None:
         self.ds_1 = pd.read_csv('data/cyberbullying_tweets.csv')
         self.ds_2 = pd.read_csv('data/FinalBalancedDataset.csv')
         self.ds_3 = pd.read_csv('data/twitter_parsed_dataset.csv')
         self.concatenated_tweets = pd.concat([self.ds_1['tweet_text'], self.ds_2['tweet'], self.ds_3['Text']], ignore_index=True)
-        print(self.ds_2.head())
+        #print(self.ds_2.head())
         # self.processed_Data = self.__process_data__()
 
     def load_parsed_tweets(self):
         self.parsed_tweets = pd.read_csv('data/twitter_parsed_dataset.csv')
 
-        for i in range(len(self.parsed_tweets.rows)):
-            tweet = self.parsed_tweets['Text'][i]
-
+        for idx, tweet in enumerate(self.parsed_tweets['Text']):
+            tweet = str(tweet)
             if(tweet.startswith('RT')):
                 tweet = tweet[2:]
-
-            tweet = self.clean_tweet(tweet)
+            self.parsed_tweets['Text'][idx] = self.clean_tweet(tweet)
+        
 
     def clean_tweet(self, tweet: str):
         """
             This function was taken from https://catriscode.com/2021/05/01/tweets-cleaning-with-python/
-
         Args:
             tweet (str): The tweet to clean.
-
         Returns:
             str: The cleaned tweet.
         """
-        if type(tweet) == np.float:
+        if type(tweet) == float:
             return ""
         temp = tweet.lower()
         
@@ -72,10 +74,8 @@ class Data():
     def hashtag_extract(self, tweet: str):
         """
         This function grabs all of the hashtags in a tweet and returns them in an array.
-
         Args:
             tweet (str): The tweet to extract hashtags from
-
         Returns:
             array[str]: The extracted hashtags are returned.
         """
@@ -83,7 +83,7 @@ class Data():
 
         hashtags = []
 
-        for word in words
+        for word in words:
             if(word.startswith('#')):
                 hashtags.append(word)
         
@@ -91,13 +91,20 @@ class Data():
 
     #This needs to make sets make sense in comparison
     def __process_data__(self):
-        processed_data = None
-        '''
-        TODO: Decide if even needed
-        '''
+        processed_data = []
         
-        return processed_data
+        for tweet in self.combined_tweets:
+            tweet = tweet.lower()
+            if 'rt' in tweet:
+                tweet = tweet.split('rt')[0]
+            processed_data.append(tweet)
+            #print(tweet)
+        self.processed_data = pd.DataFrame(processed_data)
+        pass
     
+
+'''
 d = Data()
 d.load_parsed_tweets()
 print(d.parsed_tweets)
+'''
