@@ -24,12 +24,10 @@ class Data():
     def load_parsed_tweets(self):
         self.parsed_tweets = pd.read_csv('data/twitter_parsed_dataset.csv')
 
-        for i in range(len(self.parsed_tweets.rows)):
-            tweet = self.parsed_tweets['Text'][i]
-
+        for tweet in self.parsed_tweets['Text']:
+            tweet = str(tweet)
             if(tweet.startswith('RT')):
                 tweet = tweet[2:]
-
             tweet = self.clean_tweet(tweet)
 
     def clean_tweet(self, tweet: str):
@@ -42,7 +40,7 @@ class Data():
         Returns:
             str: The cleaned tweet.
         """
-        if type(tweet) == np.float:
+        if type(tweet) == float:
             return ""
         temp = tweet.lower()
         
