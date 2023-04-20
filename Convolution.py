@@ -7,6 +7,7 @@
     Many elements were inspired by the tutorial here:
     https://realpython.com/python-keras-text-classification
 """
+import os
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer
 from keras.preprocessing.text import Tokenizer
@@ -111,7 +112,7 @@ def compileModel(self, model, optimizer, lossFunc):
         steps_per_execution = None
         )
     
-def fitModel(model, x_train, y_train, epochs: int, weights: dict[int, float], print: bool = True):
+def fitModel(self, model, epochs: int, weights: dict[int, float], print: bool = True):
     """
         This function fits the model based on the passed data.
     """
@@ -123,8 +124,8 @@ def fitModel(model, x_train, y_train, epochs: int, weights: dict[int, float], pr
 
     # Fits the model based on the passed parameters.
     model.fit(
-        x_train, 
-        y_train,
+        self.tweets_train_tok, 
+        self.label_train,
         batch_size = 10, 
         epochs = epochs, 
         verbose = verbose,
