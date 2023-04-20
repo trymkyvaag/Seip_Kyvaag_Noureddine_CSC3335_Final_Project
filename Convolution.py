@@ -12,7 +12,7 @@ import numpy as np
 from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer
-lfrom keras.preprocessing.text import Tokenizer
+from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
 from keras.models import Sequential
 from keras.layers import Dense, Flatten, Embedding, GlobalMaxPooling1D, MaxPool1D, Conv1D
