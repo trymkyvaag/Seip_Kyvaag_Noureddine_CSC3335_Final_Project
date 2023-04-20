@@ -8,6 +8,7 @@
     https://realpython.com/python-keras-text-classification
 """
 import os
+import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer
 from keras.preprocessing.text import Tokenizer
@@ -21,9 +22,13 @@ from Data_Storage import Data
 class Conv_Neur_Net():
     def __init__(self):
         self.data_storage = Data()
+        
         self.label = self.data_storage.PARSED_LABEL
         self.tweet = self.data_storage.PARSED_TWEET
         self.data = self.data_storage.parsed_tweets[[self.tweet, self.label]]
+        
+        # The location of the GloVe file.
+        self.GLOVE_LOC = 'temp'
         
         self.tokenize()
         # self.pad()
@@ -31,7 +36,8 @@ class Conv_Neur_Net():
     def tokenize(self):
         self.tweets_train, self.tweets_test, self.label_train, self.label_test = train_test_split(self.data[self.tweet].values,
                                                                                                   self.data[self.label].values,
-                                                                                                  test_size = 1/3, 
+                                                                                                  # Uses 20% of the total data for testing.
+                                                                                                  test_size = 1/5, 
                                                                                                   random_state = 0)
         
         # Creates and fits the tokenizer based on the number of words in the data set.
@@ -58,17 +64,23 @@ class Conv_Neur_Net():
         self.tweets_test_tok  =  pad_sequences(self.tweets_test_tok, padding = 'post', maxlen = max_len)
         
     def createModel(self,
-                    hiddenLayerInfo: list[tuple[int, str]] = [(2, 'softplus')], 
-                    outputFunc: str = 'softmax', 
-                    lossFunction: str = 'categorical_crossentropy',
+                    conv_layer_info: tuple[int, str] = (32, 'relu'),
+                    hidden_layer_info: list[tuple[int, str]] = [(2, 'softplus')], 
+                    output_func: str = 'softmax',
+                    use_pretrained: bool = False, 
+                    loss_function: str = 'categorical_crossentropy',
                     epochs: int = 3,
                     weights: dict[int, float] = None,
                     optimizer: str = 'adam',
                     print_prog: bool = True,
-                    print_fin: bool = True):
-        model = self.create_model_structure()
+                    print_fin: bool = True,):
+        model = self.create_model_structure(conv_layer_info, hidden_layer_info, output_func, use_pretrained)
         
-    def create_model_structure(self, hiddenLayerInfo: list[tuple[int, str]], outputFunc: str):
+    def create_model_structure(self, 
+                               conv_layer_info: tuple[int, str], 
+                               hidden_layer_info: list[tuple[int, str]], 
+                               output_func: str, 
+                               use_pretrained: bool):
         """
             This function creates the structure of the model based on the passed parameters.
         """
@@ -80,20 +92,30 @@ class Conv_Neur_Net():
         # Creates the model.
         model = Sequential(name = "Multi-Input-Model")
         # Adds the Embedding layer to the model.
-        model.add(Embedding(input_dim = self.tok_vocab_size,
-                            output_dim = output_size,
-                            name = "Embedding-Layer"))
-        model.add(Flatten())
+        if(not use_pretrained):
+            model.add(Embedding(input_dim = self.tok_vocab_size,
+                                output_dim = output_size,
+                                name = "Embedding-Layer"))
+        else:
+            load_word_embeddings()
+        
+        # Adds the convolution layer to the model.
+        model.add(Conv1D(filters = conv_layer_info[0],
+                         # It seems the general rule with convolution is to go deeper, not wider.
+                         kernel_size = 3,
+                         activation = conv_layer_info[1]))
+        # Adds global max pooling to the model.
+        model.add(GlobalMaxPooling1D())
         # Used to number the hidden layers.
         i = 1
         # Creates each hidden layer from the passed data.
-        for numAndFunc in hiddenLayerInfo:
+        for numAndFunc in hidden_layer_info:
             # First entry in numAndFunc is the number of nodes, the second is the activation function.
             model.add(Dense(numAndFunc[0], activation = numAndFunc[1], name = "Hidden-Layer-" + str(i) + "-" + numAndFunc[1]))
             i += 1
 
         # Creates the output layer.
-        model.add(Dense(1, activation = outputFunc, name = "Output-Layer-" + outputFunc))
+        model.add(Dense(1, activation = output_func, name = "Output-Layer-" + output_func))
 
         # Returns the model to caller.
         return model
@@ -130,7 +152,8 @@ def fitModel(self, model, epochs: int, weights: dict[int, float], print: bool = 
         epochs = epochs, 
         verbose = verbose,
         callbacks = None, 
-        validation_split = 0.2, 
+        # Uses 20% of the total data for validation.
+        validation_split = 1/4, 
         shuffle = True, 
         class_weight = weights, 
         sample_weight = None,
@@ -144,3 +167,11 @@ def fitModel(self, model, epochs: int, weights: dict[int, float], print: bool = 
         workers = os.cpu_count(), 
         use_multiprocessing = True, 
         )
+    
+def load_word_embeddings(self):
+    embeddings_index = {}
+    with open(self.GLOVE_LOC) as f:
+        for line in f:
+            word, coefs = line.split(maxsplit=1)
+            coefs = np.fromstring(coefs, "f", sep=" ")
+            embeddings_index[word] = coefs
