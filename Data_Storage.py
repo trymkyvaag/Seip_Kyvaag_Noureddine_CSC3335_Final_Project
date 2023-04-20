@@ -10,14 +10,14 @@ from nltk.corpus import stopwords as sw
 
 class Data():
     def __init__(self) -> None:
+        # Defines column labels.
+        self.PARSED_TWEET = 'Text'
+        self.PARSED_LABEL = 'oh_label'
+        
         self.stopwords = sw.words('english')
         self.ltzr = WordNetLemmatizer()
         self.load_concatenated_tweets()
         self.load_parsed_tweets()
-        
-        # Defines column labels.
-        self.PARSED_TWEET = 'Text'
-        self.PARSED_LABEL = 'Annotation'
         #self.parsed_tweets.style.set_properties(**{'text-align': 'left'})
 
     def load_concatenated_tweets(self) -> None:
@@ -31,11 +31,13 @@ class Data():
     def load_parsed_tweets(self):
         self.parsed_tweets = pd.read_csv('data/twitter_parsed_dataset.csv')
 
-        for idx, tweet in enumerate(self.parsed_tweets['Text']):
+        for idx, tweet in enumerate(self.parsed_tweets[self.PARSED_TWEET]):
             tweet = str(tweet)
             if(tweet.startswith('RT')):
                 tweet = tweet[2:]
-            self.parsed_tweets['Text'][idx] = self.clean_tweet(tweet)
+            self.parsed_tweets[self.PARSED_TWEET][idx] = self.clean_tweet(tweet)
+            
+        # self.parsed_tweets[self.PARSED_LABEL].replace({'none': 0, 'racism': 1, 'sexism': 2}, inplace = True )
         
 
     def clean_tweet(self, tweet: str):

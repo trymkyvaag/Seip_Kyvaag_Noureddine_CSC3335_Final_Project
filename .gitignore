@@ -3,3 +3,4 @@
 3_gram_file.txt
 Convolution.py
 data/GloVe/glove*
+.venv/

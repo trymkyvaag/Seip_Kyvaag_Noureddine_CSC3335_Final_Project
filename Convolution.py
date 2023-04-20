@@ -13,7 +13,7 @@ from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer
 from keras.preprocessing.text import Tokenizer
-from keras.preprocessing.sequence import pad_sequences
+from keras.utils import pad_sequences
 from keras.models import Sequential
 from keras.layers import Dense, Flatten, Embedding, GlobalMaxPooling1D, MaxPool1D, Conv1D
 
@@ -22,6 +22,7 @@ from Data_Storage import Data
 
 class Conv_Neur_Net():
     def __init__(self):
+        print('{:50s}'.format('Loading and cleaning data.'), end = '\r')
         self.data_storage = Data()
         
         self.label = self.data_storage.PARSED_LABEL
@@ -36,8 +37,9 @@ class Conv_Neur_Net():
         # 280 / (1 + len(' ')) = 140 
         self.max_len = 140
         
+        print('{:50s}'.format('Tokenizing data.'), end = '\r')
         self.tokenize()
-        # self.pad()
+        self.pad()  
         
     def tokenize(self):
         self.tweets_train, self.tweets_test, self.label_train, self.label_test = train_test_split(self.data[self.tweet].values,
@@ -47,10 +49,11 @@ class Conv_Neur_Net():
                                                                                                   random_state = 0)
         
         # Creates and fits the tokenizer based on the number of words in the data set.
+        print(len(self.data_storage.get_unique_words(self.data[self.tweet])))
         self.toTok = Tokenizer(num_words = len(self.data_storage.get_unique_words(self.data[self.tweet])))
-        self.toTok.fit(self.tweets_train)
+        self.toTok.fit_on_texts(self.tweets_train)
         
-        self.tweets_train_tok = self.toTok.texts_to_sequences(self.tweets_test)
+        self.tweets_train_tok = self.toTok.texts_to_sequences(self.tweets_train)
         self.tweets_test_tok = self.toTok.texts_to_sequences(self.tweets_test)
         
         # Sets the vocab size as determined by the tokenizer. Adds one because zero is reserved.
@@ -65,19 +68,22 @@ class Conv_Neur_Net():
         self.tweets_train_tok = pad_sequences(self.tweets_train_tok, padding = 'post', maxlen = self.max_len)
         self.tweets_test_tok  =  pad_sequences(self.tweets_test_tok, padding = 'post', maxlen = self.max_len)
         
-    def createModel(self,
+    def create_model(self,
                     conv_layer_info: tuple[int, int, str] = (32, 3, 'relu'),
                     hidden_layer_info: list[tuple[int, str]] = [(2, 'softplus')], 
                     output_func: str = 'softmax',
                     use_pretrained: bool = False, 
-                    loss_function: str = 'categorical_crossentropy',
+                    loss_function: str = 'binary_crossentropy',
                     epochs: int = 3,
                     weights: dict[int, float] = None,
                     optimizer: str = 'adam',
                     print_prog: bool = True,
                     print_fin: bool = True,):
+        print('{:50s}'.format('Creating model structure.'), end = '\r')
         self.create_model_structure(conv_layer_info, hidden_layer_info, output_func, use_pretrained)
+        print('{:50s}'.format('Compiling model.'), end = '\r')
         self.compile_model(optimizer, loss_function)
+        print('{:50s}'.format('Fitting model.'), end = '\r')
         self.fit_model(epochs, weights, print_prog)
         
     def create_model_structure(self, 
@@ -99,9 +105,10 @@ class Conv_Neur_Net():
         if(not use_pretrained):
             self.model.add(Embedding(input_dim = self.tok_vocab_size,
                                      output_dim = output_size,
-                                     name = "Embedding-Layer"))
+                                     name = "Embedding-Layer",
+                                     input_length = self.max_len))
         else:
-            self.pad()
+            # self.pad()
             emb_matrix = self.load_word_embeddings(self.tok_vocab_size, output_size)
             self.model.add(Embedding(input_dim = self.tok_vocab_size,
                                      output_dim = output_size,
@@ -114,6 +121,7 @@ class Conv_Neur_Net():
                               # It seems the general rule with convolution is to go deeper, not wider.
                               kernel_size = conv_layer_info[1],
                               activation = conv_layer_info[2]))
+        
         # Adds global max pooling to the model.
         self.model.add(GlobalMaxPooling1D())
         # Used to number the hidden layers.
@@ -141,15 +149,19 @@ class Conv_Neur_Net():
             steps_per_execution = None
             )
         
-    def fit_model(self, epochs: int, weights: dict[int, float], print: bool = True):
+    def fit_model(self, epochs: int, weights: dict[int, float], print_prog: bool = True):
         """
             This function fits the model based on the passed data.
         """
         # 0 means that no progress bar will be displayed per epoch.
         verbose = 0
-        if(print):
+        if(print_prog):
             # 1 means a progress bar will be displayed per epoch.
             verbose = 1
+            
+        print(self.tweets_train[1337])
+        print(self.tweets_train_tok[1337])
+        print(self.label_train[1337])
 
         # Fits the model based on the passed parameters.
         self.model.fit(
@@ -160,7 +172,8 @@ class Conv_Neur_Net():
             verbose = verbose,
             callbacks = None, 
             # Uses 20% of the total data for validation.
-            validation_split = 1/4, 
+            # validation_split = 1/4, 
+            validation_data = (self.tweets_test_tok, self.label_test),
             shuffle = True, 
             class_weight = weights, 
             sample_weight = None,
