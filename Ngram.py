@@ -1,6 +1,7 @@
 from Topic_Analysis import TA
 import spacy
-import re
+import nltk
+#nltk.download()
 import numpy as np
 import pandas as pd
 from pprint import pprint
@@ -23,6 +24,9 @@ warnings.filterwarnings("ignore",category=DeprecationWarning)
 
 from nltk.corpus import stopwords
 stop_words = stopwords.words('english')
+from nltk.corpus import brown
+from nltk.book import *
+nltk.help.upenn_tagset('NN')
 
 '''
 With or without rt???
@@ -69,10 +73,10 @@ class ngram_class():
 
         # Initialize spacy 'en' model, keeping only tagger component (for efficiency)
         # python3 -m spacy download en
-        self.nlp = spacy.load('en', disable=['parser', 'ner'])
+        #self.nlp = spacy.load("en_core_web_sm")
 
         # Do lemmatization keeping only noun, adj, vb, adv
-        self.data_lemmatized = self.lemmatization(self.data_words_bigrams, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV'])
+        #self.data_lemmatized = self.lemmatization(self.data_words_bigrams, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV'])
 
 def test():
     tac = TA()
@@ -82,14 +86,10 @@ def test():
 
     # Form Bigrams
     data_words_bigrams = ngc.make_bigrams(data_words_nostops)
-
-    # Initialize spacy 'en' model, keeping only tagger component (for efficiency)
-    # python3 -m spacy download en
-    nlp = spacy.load('en', disable=['parser', 'ner'])
-
+    print(data_words_bigrams)
     # Do lemmatization keeping only noun, adj, vb, adv
-    data_lemmatized = ngc.lemmatization(data_words_bigrams, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV'])
+    #data_lemmatized = ngc.lemmatization(data_words_bigrams, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV'])
 
-    print(data_lemmatized[:1])
+    #print(data_lemmatized[:1])
 
 test()
