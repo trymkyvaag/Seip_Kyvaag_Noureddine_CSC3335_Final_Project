@@ -8,7 +8,6 @@ from nltk.stem import WordNetLemmatizer
 # NLTK Stop words
 from nltk.corpus import stopwords as sw
 
-
 class Data():
     def __init__(self) -> None:
         self.stopwords = sw.words('english')
@@ -20,7 +19,6 @@ class Data():
         self.PARSED_TWEET = 'Text'
         self.PARSED_LABEL = 'Annotation'
         #self.parsed_tweets.style.set_properties(**{'text-align': 'left'})
-        
 
     def load_concatenated_tweets(self) -> None:
         self.ds_1 = pd.read_csv('data/cyberbullying_tweets.csv')
@@ -106,6 +104,13 @@ class Data():
         self.processed_data = pd.DataFrame(processed_data)
         pass
     
+    def get_unique_words(self, column):
+        words = {}
+        for row in column:
+            for word in row.split(' '):
+                words.update({word: None})
+            
+        return words
 
 '''
 d = Data()
