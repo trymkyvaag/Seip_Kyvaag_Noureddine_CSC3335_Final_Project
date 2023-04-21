@@ -84,10 +84,10 @@ class ngram_class():
 
         # Form Bigrams
         data_words_bigrams = self.make_bigrams(data_words_nostops)
-        print(data_words_bigrams)
+        #print(data_words_bigrams)
         # Do lemmatization keeping only noun, adj, vb, adv
         #data_lemmatized = ngc.lemmatization(data_words_bigrams, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV'])
 
-        print(self.data_lemmatized[:1])
+        print(self.data_lemmatized[:5])
 
 test = ngram_class(TA())
