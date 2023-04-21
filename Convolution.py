@@ -41,6 +41,22 @@ class Conv_Neur_Net():
         self.tokenize()
         self.pad()  
         
+        # print('{:50s}'.format('Doing stupid conversion part 1.'), end = '\r')
+        # temp = np.zeros((len(self.tweets_train_tok), self.max_len, 1))
+        
+        # for o in range(len(self.tweets_train_tok)):
+        #     for i in range(self.max_len):
+        #         temp[o][i][0] = self.tweets_train_tok[o][i]
+        # self.tweets_train_tok = temp
+        
+        # print('{:50s}'.format('Doing stupid conversion part 2.'), end = '\r')
+        # temp = np.zeros((len(self.tweets_test_tok), self.max_len, 1))
+        
+        # for o in range(len(self.tweets_test_tok)):
+        #     for i in range(self.max_len):
+        #         temp[o][i][0] = self.tweets_test_tok[o][i]
+        # self.tweets_test_tok = temp
+        
     def tokenize(self):
         self.tweets_train, self.tweets_test, self.label_train, self.label_test = train_test_split(self.data[self.tweet].values,
                                                                                                   self.data[self.label].values,
@@ -117,10 +133,10 @@ class Conv_Neur_Net():
                                      trainable = True))
         
         # Adds the convolution layer to the model.
-        self.model.add(Conv1D(filters = conv_layer_info[0],
-                              # It seems the general rule with convolution is to go deeper, not wider.
-                              kernel_size = conv_layer_info[1],
-                              activation = conv_layer_info[2]))
+        # self.model.add(Conv1D(filters = conv_layer_info[0],
+        #                       # It seems the general rule with convolution is to go deeper, not wider.
+        #                       kernel_size = conv_layer_info[1],
+        #                       activation = conv_layer_info[2]))
         
         # Adds global max pooling to the model.
         self.model.add(GlobalMaxPooling1D())
