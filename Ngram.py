@@ -24,9 +24,9 @@ warnings.filterwarnings("ignore",category=DeprecationWarning)
 
 from nltk.corpus import stopwords
 stop_words = stopwords.words('english')
-from nltk.corpus import brown
-from nltk.book import *
-nltk.help.upenn_tagset('NN')
+# from nltk.corpus import brown
+# from nltk.book import *
+# nltk.help.upenn_tagset('NN')
 
 '''
 With or without rt???
@@ -38,7 +38,7 @@ class ngram_class():
         self.ta_class = ta
         self.__create_ngrams__()
         self.__clean__()
-        
+        self.test()
 
         # Define functions for stopwords, bigrams, trigrams and lemmatization
     def remove_stopwords(self,texts):
@@ -73,23 +73,21 @@ class ngram_class():
 
         # Initialize spacy 'en' model, keeping only tagger component (for efficiency)
         # python3 -m spacy download en
-        #self.nlp = spacy.load("en_core_web_sm")
+        self.nlp = spacy.load("en_core_web_sm")
 
         # Do lemmatization keeping only noun, adj, vb, adv
-        #self.data_lemmatized = self.lemmatization(self.data_words_bigrams, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV'])
+        self.data_lemmatized = self.lemmatization(self.data_words_bigrams, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV'])
 
-def test():
-    tac = TA()
-    ngc = ngram_class(tac)
-    # Remove Stop Words
-    data_words_nostops = ngc.remove_stopwords(ngc.ta_class.toakanized_data)
+    def test(self):
+        # Remove Stop Words
+        data_words_nostops = self.remove_stopwords(self.ta_class.toakanized_data)
 
-    # Form Bigrams
-    data_words_bigrams = ngc.make_bigrams(data_words_nostops)
-    print(data_words_bigrams)
-    # Do lemmatization keeping only noun, adj, vb, adv
-    #data_lemmatized = ngc.lemmatization(data_words_bigrams, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV'])
+        # Form Bigrams
+        data_words_bigrams = self.make_bigrams(data_words_nostops)
+        print(data_words_bigrams)
+        # Do lemmatization keeping only noun, adj, vb, adv
+        #data_lemmatized = ngc.lemmatization(data_words_bigrams, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV'])
 
-    #print(data_lemmatized[:1])
+        print(self.data_lemmatized[:1])
 
-test()
+test = ngram_class(TA())
