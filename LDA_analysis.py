@@ -32,7 +32,7 @@ With or without rt???
 '''
 stop_words.extend(['from', 'subject', 're', 'edu', 'use'])
 
-class ngram_class():
+class LDA_analysis():
     def __init__(self, ta: TA) -> None:
         self.ta_class = ta
         self.__create_ngrams__()
@@ -197,4 +197,5 @@ No suport anympre
         print('\nCoherence Score: ', coherence_ldamallet)
 '''
 
-test = ngram_class(TA())
+
+print()
