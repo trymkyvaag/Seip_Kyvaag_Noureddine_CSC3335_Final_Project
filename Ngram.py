@@ -40,6 +40,7 @@ class ngram_class():
         self.__clean__()
         self.__create_word_dict__()
         self.LDA()
+        self.complexity()
         self.test()
 
         # Define functions for stopwords, bigrams, trigrams and lemmatization
@@ -102,16 +103,17 @@ class ngram_class():
                                            alpha='auto',
                                            per_word_topics=True)
         
+    def complexity(self):
+        print('\nPerplexity: ', self.LDA_model.log_perplexity(self.corpus))  # a measure of how good the model is. lower the better.
+        # Compute Coherence Score, using umass score since reccomended by: https://www.baeldung.com/cs/topic-modeling-coherence-score
+        self.coherence_model_lda = CoherenceModel(model=self.LDA_model, texts=self.data_lemmatized, dictionary=self.id2word, coherence='u_mass')
+        self.coherence_lda = self.coherence_model_lda.get_coherence()
+        print('\nCoherence Score: ', self.coherence_lda)
+
 
     def test(self):
-        # Remove Stop Words
-        #data_words_nostops = self.remove_stopwords(self.ta_class.toakanized_data)
-        # Form Bigrams
-        #data_words_bigrams = self.make_bigrams(data_words_nostops)
-        #print(data_words_bigrams)
-        # Do lemmatization keeping only noun, adj, vb, adv
-        #data_lemmatized = ngc.lemmatization(data_words_bigrams, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV'])
 
+        #To look at corpus and lemmatized data
         '''
         Testing of diff things
         print(self.corpus[:5])
@@ -123,6 +125,10 @@ class ngram_class():
         print(test)
         '''
         # Print the Keyword in the 10 topics
+        '''
         pprint(self.LDA_model.print_topics(num_topics=10))
         self.doc_lda = self.LDA_model[self.corpus]
+        '''
+
+
 test = ngram_class(TA())

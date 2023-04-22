@@ -33,6 +33,8 @@ class Data():
             tweet = str(tweet)
             if(tweet.startswith('RT')):
                 tweet = tweet[2:]
+            if(tweet.__contains__('_')):
+                tweet.replace('_', ' ')
             self.parsed_tweets['Text'][idx] = self.clean_tweet(tweet)
         
 
