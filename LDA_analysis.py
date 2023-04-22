@@ -1,9 +1,6 @@
-from Topic_Analysis import TA
+from Toakanize import Toakanize
 import spacy
-import nltk
-#nltk.download()
-import numpy as np
-import pandas as pd
+#nltk.download(), must be ran once
 from pprint import pprint
 #https://www.machinelearningplus.com/nlp/topic-modeling-gensim-python/
 # Gensim
@@ -11,9 +8,8 @@ import gensim
 import gensim.corpora as corpora
 from gensim.utils import simple_preprocess
 from gensim.models import CoherenceModel
-#Lemmatizer (change word form. Better -> Good, Houses -> House)
-from nltk.stem import WordNetLemmatizer
 from matplotlib import pyplot as plt
+
 # Enable logging for gensim 
 import logging
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.ERROR)
@@ -23,24 +19,17 @@ warnings.filterwarnings("ignore",category=DeprecationWarning)
 
 from nltk.corpus import stopwords
 stop_words = stopwords.words('english')
-# from nltk.corpus import brown
-# from nltk.book import *
-# nltk.help.upenn_tagset('NN')
-
-'''
-With or without rt???
-'''
 stop_words.extend(['from', 'subject', 're', 'edu', 'use'])
 
 class LDA_analysis():
-    def __init__(self, ta: TA) -> None:
+    def __init__(self, ta: Toakanize) -> None:
         self.ta_class = ta
         self.__create_ngrams__()
         self.__clean__()
         self.__create_word_dict__()
         self.__LDA__(10)
         self.__complexity__()
-        self.find_best_k(40, 2, 6)
+        #self.find_best_k(40, 2, 6)
         self.test()
 
         # Define functions for stopwords, bigrams, trigrams and lemmatization
@@ -48,12 +37,14 @@ class LDA_analysis():
         return [[word for word in simple_preprocess(str(doc)) if word not in stop_words] for doc in texts]
 
     def make_bigrams(self,texts):
+        print('-----Making bi/trigrams-----\n')
         return [self.bigram_mod[doc] for doc in texts]
 
     def make_trigrams(self,texts):
         return [self.trigram_mod[self.bigram_mod[doc]] for doc in texts]
 
     def lemmatization(self,texts, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV']):
+        print('-----Tagging words-----\n')
         """https://spacy.io/api/annotation"""
         texts_out = []
         for sent in texts:
@@ -68,6 +59,7 @@ class LDA_analysis():
         self.trigram_mod = gensim.models.phrases.Phraser(self.trigram)
 
     def __clean__(self):
+        print('-----Cleaning tweets-----\n')
         # Remove Stop Words
         self.data_words_nostops = self.remove_stopwords(self.ta_class.toakanized_data)
 
@@ -79,8 +71,8 @@ class LDA_analysis():
         self.nlp = spacy.load("en_core_web_sm")
 
         # Do lemmatization keeping only noun, adj, vb, adv
+        print('-----Lemmaztion only NN, A, V, AV -----\n')
         self.data_lemmatized = self.lemmatization(self.data_words_bigrams, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV'])
-
 
     def __create_word_dict__(self):
         # Create Dictionary
@@ -100,12 +92,10 @@ class LDA_analysis():
                                            random_state=100,
                                            update_every=1,
                                            chunksize=4000,
-                                           passes=50,
+                                           passes=200,
                                            alpha='auto',
                                            per_word_topics=True)
         
-
-
     def __complexity__(self):
         print('-----LDA coherence-----\n')
         print('\nPerplexity: ', self.LDA_model.log_perplexity(self.corpus))  # a measure of how good the model is. lower the better.
@@ -114,8 +104,13 @@ class LDA_analysis():
         self.coherence_lda = self.coherence_model_lda.get_coherence()
         print('\nCoherence Score: ', self.coherence_lda, '\n')
     
-    def find_best_k(self, limit, start = None, stop = None):
-        models, values = self.__compute_coherence_values__(limit, start, stop)
+    def find_best_k(self, limit, start = None, step = None):
+        print('\n\n-----Model params used: -----\n')
+        print(f'\tRandom state seed: {self.model_rstate}')
+        print(f'\tUpdate chunk every: {self.model_update_every}')
+        print(f'\tModel Chunk size: {self.model_chunksize}')
+        print(f'\tNumber passes: {self.model_passes}\n')
+        models, values = self.__compute_coherence_values__(limit, start, step)
         print('-----Plotting-----\n')
         x = range(start, limit, 6)
         plt.plot(x, values)
@@ -144,13 +139,20 @@ class LDA_analysis():
         coherence_values = []
         model_list = []
         for num_topics in range(start, limit, step):
+
+            #Values to adjust
+            self.model_rstate = 100
+            self.model_update_every = 1
+            self.model_chunksize = 1000
+            self.model_passes = 200
+         
             LDA_model = gensim.models.ldamodel.LdaModel(corpus=self.corpus,
                                            id2word=self.id2word,
                                            num_topics=num_topics, 
-                                           random_state=100,
-                                           update_every=1,
-                                           chunksize=100,
-                                           passes=40,
+                                           random_state=self.model_rstate,
+                                           update_every=self.model_update_every,
+                                           chunksize=self.model_chunksize,
+                                           passes=self.model_passes,
                                            alpha='auto',
                                            per_word_topics=True)
             model_list.append(LDA_model)
@@ -163,7 +165,6 @@ class LDA_analysis():
         print('-----Models and values found-----\n')
 
         return model_list, coherence_values
-
 
     def test(self):
 
@@ -178,24 +179,8 @@ class LDA_analysis():
         test = [[(self.id2word[id], freq) for id, freq in cp] for cp in self.corpus[:30]]
         print(test)
         '''
-        # Print the Keyword in the 10 topics
+        # Print the Keyword in the 10 topics in the first model
         
         pprint(self.LDA_model.print_topics(num_topics=self.num_topics))
-        self.doc_lda = self.LDA_model[self.corpus]
+        #self.doc_lda = self.LDA_model[self.corpus]
         
-    '''
-No suport anympre
-    def __mallet_topics__(self):
-        print('----------Mallet coherence------\n')
-        mallet_path = 'data/mallet-2.0.8'
-        ldamallet = gensim.models.wrappers.LdaMallet(mallet_path, corpus=self.corpus, num_topics=20, id2word=self.id2word)
-        # Show Topics
-        pprint(ldamallet.show_topics(formatted=False))
-        # Compute Coherence Score
-        coherence_model_ldamallet = CoherenceModel(model=ldamallet, texts=self.data_lemmatized, dictionary=self.id2word, coherence='u_mass')
-        coherence_ldamallet = coherence_model_ldamallet.get_coherence()
-        print('\nCoherence Score: ', coherence_ldamallet)
-'''
-
-
-print()
