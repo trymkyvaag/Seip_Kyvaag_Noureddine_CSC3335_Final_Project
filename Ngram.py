@@ -39,7 +39,7 @@ class ngram_class():
         self.__create_ngrams__()
         self.__clean__()
         self.__create_word_dict__()
-        self.LDA()
+        self.LDA(10)
         self.complexity()
         self.test()
 
@@ -92,14 +92,15 @@ class ngram_class():
         # Term Document Frequency
         self.corpus = [self.id2word.doc2bow(text) for text in texts]
 
-    def LDA(self):
+    def LDA(self, num_topics):
+        self.num_topics = num_topics
         self.LDA_model = gensim.models.ldamodel.LdaModel(corpus=self.corpus,
                                            id2word=self.id2word,
-                                           num_topics=10, 
+                                           num_topics=self.num_topics, 
                                            random_state=100,
                                            update_every=1,
-                                           chunksize=100,
-                                           passes=10,
+                                           chunksize=1000,
+                                           passes=100,
                                            alpha='auto',
                                            per_word_topics=True)
         
@@ -125,10 +126,10 @@ class ngram_class():
         print(test)
         '''
         # Print the Keyword in the 10 topics
-        '''
-        pprint(self.LDA_model.print_topics(num_topics=10))
+        
+        pprint(self.LDA_model.print_topics(num_topics=self.num_topics))
         self.doc_lda = self.LDA_model[self.corpus]
-        '''
+        
 
 
 test = ngram_class(TA())
