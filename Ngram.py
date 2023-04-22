@@ -38,6 +38,7 @@ class ngram_class():
         self.ta_class = ta
         self.__create_ngrams__()
         self.__clean__()
+        self.__create_word_dict__()
         self.test()
 
         # Define functions for stopwords, bigrams, trigrams and lemmatization
@@ -78,12 +79,25 @@ class ngram_class():
         # Do lemmatization keeping only noun, adj, vb, adv
         self.data_lemmatized = self.lemmatization(self.data_words_bigrams, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV'])
 
+
+    def __create_word_dict__(self):
+        # Create Dictionary
+        self.id2word = corpora.Dictionary(self.data_lemmatized)
+
+        # Create Corpus
+        texts = self.data_lemmatized
+
+        # Term Document Frequency
+        self.corpus = [self.id2word.doc2bow(text) for text in texts]
+
+        # View
+        print(self.corpus[:5])
+
     def test(self):
         # Remove Stop Words
-        data_words_nostops = self.remove_stopwords(self.ta_class.toakanized_data)
-
+        #data_words_nostops = self.remove_stopwords(self.ta_class.toakanized_data)
         # Form Bigrams
-        data_words_bigrams = self.make_bigrams(data_words_nostops)
+        #data_words_bigrams = self.make_bigrams(data_words_nostops)
         #print(data_words_bigrams)
         # Do lemmatization keeping only noun, adj, vb, adv
         #data_lemmatized = ngc.lemmatization(data_words_bigrams, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV'])
