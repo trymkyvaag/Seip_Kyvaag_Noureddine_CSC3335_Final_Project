@@ -11,10 +11,9 @@ import gensim
 import gensim.corpora as corpora
 from gensim.utils import simple_preprocess
 from gensim.models import CoherenceModel
-
 #Lemmatizer (change word form. Better -> Good, Houses -> House)
 from nltk.stem import WordNetLemmatizer
-
+from matplotlib import pyplot as plt
 # Enable logging for gensim 
 import logging
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.ERROR)
@@ -39,8 +38,9 @@ class ngram_class():
         self.__create_ngrams__()
         self.__clean__()
         self.__create_word_dict__()
-        self.LDA(10)
-        self.complexity()
+        self.__LDA__(10)
+        self.__complexity__()
+        self.find_best_k(40, 2, 6)
         self.test()
 
         # Define functions for stopwords, bigrams, trigrams and lemmatization
@@ -92,24 +92,77 @@ class ngram_class():
         # Term Document Frequency
         self.corpus = [self.id2word.doc2bow(text) for text in texts]
 
-    def LDA(self, num_topics):
+    def __LDA__(self, num_topics):
         self.num_topics = num_topics
         self.LDA_model = gensim.models.ldamodel.LdaModel(corpus=self.corpus,
                                            id2word=self.id2word,
                                            num_topics=self.num_topics, 
                                            random_state=100,
                                            update_every=1,
-                                           chunksize=1000,
-                                           passes=100,
+                                           chunksize=4000,
+                                           passes=50,
                                            alpha='auto',
                                            per_word_topics=True)
         
-    def complexity(self):
+
+
+    def __complexity__(self):
+        print('-----LDA coherence-----\n')
         print('\nPerplexity: ', self.LDA_model.log_perplexity(self.corpus))  # a measure of how good the model is. lower the better.
         # Compute Coherence Score, using umass score since reccomended by: https://www.baeldung.com/cs/topic-modeling-coherence-score
         self.coherence_model_lda = CoherenceModel(model=self.LDA_model, texts=self.data_lemmatized, dictionary=self.id2word, coherence='u_mass')
         self.coherence_lda = self.coherence_model_lda.get_coherence()
-        print('\nCoherence Score: ', self.coherence_lda)
+        print('\nCoherence Score: ', self.coherence_lda, '\n')
+    
+    def find_best_k(self, limit, start = None, stop = None):
+        models, values = self.__compute_coherence_values__(limit, start, stop)
+        print('-----Plotting-----\n')
+        x = range(start, limit, 6)
+        plt.plot(x, values)
+        plt.xlabel("Num Topics")
+        plt.ylabel("Coherence score")
+        plt.legend(("coherence_values"), loc='best')
+        plt.show()
+
+    def __compute_coherence_values__(self, limit, start=2, step=3):
+        """
+        Compute c_v coherence for various number of topics
+
+        Parameters:
+        ----------
+        dictionary : Gensim dictionary
+        corpus : Gensim corpus
+        texts : List of input texts
+        limit : Max num of topics
+
+        Returns:
+        -------
+        model_list : List of LDA topic models
+        coherence_values : Coherence values corresponding to the LDA model with respective number of topics
+        """
+        print('-----Finding best K-----:\n')
+        coherence_values = []
+        model_list = []
+        for num_topics in range(start, limit, step):
+            LDA_model = gensim.models.ldamodel.LdaModel(corpus=self.corpus,
+                                           id2word=self.id2word,
+                                           num_topics=num_topics, 
+                                           random_state=100,
+                                           update_every=1,
+                                           chunksize=100,
+                                           passes=40,
+                                           alpha='auto',
+                                           per_word_topics=True)
+            model_list.append(LDA_model)
+            
+            coherencemodel = CoherenceModel(model=LDA_model, texts=self.data_lemmatized, dictionary=self.id2word, coherence='u_mass')
+            c = coherencemodel.get_coherence()
+            coherence_values.append(c)
+            print(f'Topics {num_topics}, coherence: {c}')
+
+        print('-----Models and values found-----\n')
+
+        return model_list, coherence_values
 
 
     def test(self):
@@ -130,6 +183,18 @@ class ngram_class():
         pprint(self.LDA_model.print_topics(num_topics=self.num_topics))
         self.doc_lda = self.LDA_model[self.corpus]
         
-
+    '''
+No suport anympre
+    def __mallet_topics__(self):
+        print('----------Mallet coherence------\n')
+        mallet_path = 'data/mallet-2.0.8'
+        ldamallet = gensim.models.wrappers.LdaMallet(mallet_path, corpus=self.corpus, num_topics=20, id2word=self.id2word)
+        # Show Topics
+        pprint(ldamallet.show_topics(formatted=False))
+        # Compute Coherence Score
+        coherence_model_ldamallet = CoherenceModel(model=ldamallet, texts=self.data_lemmatized, dictionary=self.id2word, coherence='u_mass')
+        coherence_ldamallet = coherence_model_ldamallet.get_coherence()
+        print('\nCoherence Score: ', coherence_ldamallet)
+'''
 
 test = ngram_class(TA())
