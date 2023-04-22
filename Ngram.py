@@ -39,6 +39,7 @@ class ngram_class():
         self.__create_ngrams__()
         self.__clean__()
         self.__create_word_dict__()
+        self.LDA()
         self.test()
 
         # Define functions for stopwords, bigrams, trigrams and lemmatization
@@ -90,8 +91,17 @@ class ngram_class():
         # Term Document Frequency
         self.corpus = [self.id2word.doc2bow(text) for text in texts]
 
-        # View
-        print(self.corpus[:5])
+    def LDA(self):
+        self.LDA_model = gensim.models.ldamodel.LdaModel(corpus=self.corpus,
+                                           id2word=self.id2word,
+                                           num_topics=10, 
+                                           random_state=100,
+                                           update_every=1,
+                                           chunksize=100,
+                                           passes=10,
+                                           alpha='auto',
+                                           per_word_topics=True)
+        
 
     def test(self):
         # Remove Stop Words
@@ -102,6 +112,17 @@ class ngram_class():
         # Do lemmatization keeping only noun, adj, vb, adv
         #data_lemmatized = ngc.lemmatization(data_words_bigrams, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV'])
 
+        '''
+        Testing of diff things
+        print(self.corpus[:5])
         print(self.data_lemmatized[:5])
-
+        '''
+        # Human readable format of corpus (term-frequency)
+        '''
+        test = [[(self.id2word[id], freq) for id, freq in cp] for cp in self.corpus[:30]]
+        print(test)
+        '''
+        # Print the Keyword in the 10 topics
+        pprint(self.LDA_model.print_topics(num_topics=10))
+        self.doc_lda = self.LDA_model[self.corpus]
 test = ngram_class(TA())
