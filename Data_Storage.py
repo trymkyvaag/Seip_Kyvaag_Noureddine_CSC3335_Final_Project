@@ -31,19 +31,29 @@ class Data():
                                               self.ds_4['headline'],
                                               self.ds_5['TEXT']], 
                                              ignore_index=True)
+        self.concatenated_tweets = pd.DataFrame(self.concatenated_tweets).rename(columns={0: 'Text'})
         #print(self.ds_2.head())
         # self.processed_Data = self.__process_data__()
 
     def load_parsed_tweets(self):
         self.parsed_tweets = pd.read_csv('data/twitter_parsed_dataset.csv')
+        
+    def clean_parsed(self):
+        self.parsed_tweets = self.clean_tweets(self.parsed_tweets, 'Text')
+        
+    def clean_concatenated(self):
+        self.concatenated_tweets = self.clean_tweets(self.concatenated_tweets, 'Text')
 
-        for idx, tweet in enumerate(self.parsed_tweets['Text']):
+    def clean_tweets(self, tweets_to_clean, column_name: str):        
+        for idx, tweet in enumerate(tweets_to_clean[column_name]):
             tweet = str(tweet)
             if(tweet.startswith('RT')):
                 tweet = tweet[2:]
             if(tweet.__contains__('_')):
                 tweet.replace('_', ' ')
-            self.parsed_tweets['Text'][idx] = self.clean_tweet(tweet)
+            tweets_to_clean[column_name][idx] = self.clean_tweet(tweet)
+            
+        return tweets_to_clean
         
 
     def clean_tweet(self, tweet: str):
