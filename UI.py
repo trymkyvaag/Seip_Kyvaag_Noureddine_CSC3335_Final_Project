@@ -14,11 +14,8 @@ root.geometry("850x850")
 panel_1 = PanedWindow(bd=4, relief="raised", bg="red")
 panel_1.pack(fill=BOTH, expand=1)
 
-label = Label(panel_1, text="Enter Tweet")
-panel_1.add(label)
-
 textField1 = Entry()
-panel_1.add(textField1)
+textField1.pack(fill='x')
 
 enterButton = Button(text="Submit")
 enterButton.pack()
