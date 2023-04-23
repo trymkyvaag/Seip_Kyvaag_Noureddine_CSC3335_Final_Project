@@ -13,6 +13,7 @@ class Toakanize:
     '''
     def __init__(self) -> None:
         self.data_class = Data()
+        self.data_class.clean_concatenated()
         self.__toakanize__()
 
     def __toakanize__(self):
@@ -20,6 +21,6 @@ class Toakanize:
         self.toakanized_data = list(self.tweets_to_words())
 
     def tweets_to_words(self):
-        for tweet in self.data_class.parsed_tweets['Text']:
+        for tweet in self.data_class.concatenated_tweets['Text']:
                 yield(gensim.utils.simple_preprocess(str(tweet)))
 
