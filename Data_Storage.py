@@ -12,6 +12,7 @@ from nltk.corpus import stopwords as sw
 class Data():
     def __init__(self) -> None:
         self.stopwords = sw.words('english')
+        self.stopwords.extend(['from', 'subject', 're', 'edu', 'use'])
         self.ltzr = WordNetLemmatizer()
         self.load_concatenated_tweets()
         self.load_parsed_tweets()
@@ -22,7 +23,14 @@ class Data():
         self.ds_1 = pd.read_csv('data/cyberbullying_tweets.csv')
         self.ds_2 = pd.read_csv('data/FinalBalancedDataset.csv')
         self.ds_3 = pd.read_csv('data/twitter_parsed_dataset.csv')
-        self.concatenated_tweets = pd.concat([self.ds_1['tweet_text'], self.ds_2['tweet'], self.ds_3['Text']], ignore_index=True)
+        self.ds_4 = pd.read_csv('data/cyberbullying_tweets_2.csv')
+        self.ds_5 = pd.read_csv('data/cyberbullying-dataset.csv')
+        self.concatenated_tweets = pd.concat([self.ds_1['tweet_text'], 
+                                              self.ds_2['tweet'], 
+                                              self.ds_3['Text'], 
+                                              self.ds_4['headline'],
+                                              self.ds_5['TEXT']], 
+                                             ignore_index=True)
         #print(self.ds_2.head())
         # self.processed_Data = self.__process_data__()
 
