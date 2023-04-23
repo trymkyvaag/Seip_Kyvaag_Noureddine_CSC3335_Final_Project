@@ -32,8 +32,6 @@ class Data():
                                               self.ds_5['TEXT']], 
                                              ignore_index=True)
         self.concatenated_tweets = pd.DataFrame(self.concatenated_tweets).rename(columns={0: 'Text'})
-        #print(self.ds_2.head())
-        # self.processed_Data = self.__process_data__()
 
     def load_parsed_tweets(self):
         self.parsed_tweets = pd.read_csv('data/twitter_parsed_dataset.csv')
@@ -47,12 +45,21 @@ class Data():
     def clean_tweets(self, tweets_to_clean, column_name: str):        
         for idx, tweet in enumerate(tweets_to_clean[column_name]):
             tweet = str(tweet)
-            if(tweet.startswith('RT')):
+            # Counts complete retweets as their own tweet.
+            if(tweet.startswith('RT ')):
                 tweet = tweet[2:]
+            
+            # If the tweet contains a retweet, splits them up into separate tweets.
+            if(tweet.__contains__('RT')):
+                for split_tweet in tweet.split('RT'):
+                    tweets_to_clean.append(split_tweet)
+            else:
+                tweets_to_clean[column_name][idx] = self.clean_tweet(tweet)
+            
+            # Removes underscores from the tweet.
             if(tweet.__contains__('_')):
                 tweet.replace('_', ' ')
-            tweets_to_clean[column_name][idx] = self.clean_tweet(tweet)
-            
+                
         return tweets_to_clean
         
 
@@ -71,7 +78,7 @@ class Data():
         temp = tweet.lower()
         
         # Nothing is done with these at the moment, but they could be useful for autotagging tweets.
-        hashtags = self.hashtag_extract(tweet)
+        # hashtags = self.hashtag_extract(tweet)
         
         temp = re.sub("'", "", temp) # to avoid removing contractions in english
         temp = re.sub("@[A-Za-z0-9_]+","", temp)
@@ -111,21 +118,7 @@ class Data():
             if(word.startswith('#')):
                 hashtags.append(word)
         
-        return hashtags
-
-    #This needs to make sets make sense in comparison
-    def __process_data__(self):
-        processed_data = []
-        
-        for tweet in self.combined_tweets:
-            tweet = tweet.lower()
-            if 'rt' in tweet:
-                tweet = tweet.split('rt')[0]
-            processed_data.append(tweet)
-            #print(tweet)
-        self.processed_data = pd.DataFrame(processed_data)
-        pass
-    
+        return hashtags   
 
 '''
 d = Data()
