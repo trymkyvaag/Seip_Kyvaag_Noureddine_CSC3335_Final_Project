@@ -27,7 +27,7 @@ class LDA_analysis():
         self.__create_ngrams__()
         self.__clean__()
         self.__create_word_dict__()
-        self.__LDA__(10)
+        self.__LDA__(5)
         self.__complexity__()
         #self.find_best_k(40, 2, 6)
         self.test()
@@ -59,7 +59,7 @@ class LDA_analysis():
         self.trigram_mod = gensim.models.phrases.Phraser(self.trigram)
 
     def __clean__(self):
-        print('-----Cleaning tweets-----\n')
+        print('\n-----Cleaning tweets-----\n')
         # Remove Stop Words
         self.data_words_nostops = self.remove_stopwords(self.ta_class.toakanized_data)
 
@@ -91,8 +91,8 @@ class LDA_analysis():
                                            num_topics=self.num_topics, 
                                            random_state=100,
                                            update_every=1,
-                                           chunksize=4000,
-                                           passes=200,
+                                           chunksize=500,
+                                           passes=500,
                                            alpha='auto',
                                            per_word_topics=True)
         
