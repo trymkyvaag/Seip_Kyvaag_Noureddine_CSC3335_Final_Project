@@ -15,13 +15,13 @@ class CyberDetect:
         self.window.mainloop()
         
     def _setup_main_window(self):
-        self.window.title("CyberBullying Detector")
+        self.window.title("Cyberbullying Detector")
         self.window.resizable(width=False, height=False)
         self.window.configure(width=470, height=550, bg=BG_COLOR)
         
         # head label
         head_label = tk.Label(self.window, bg=BG_COLOR, fg=TEXT_COLOR,
-                              text="Twitter", font=FONT_BOLD, pady=10)
+                              text="Cyberbullying Detector", font=FONT_BOLD, pady=10)
         head_label.pack(side=tk.TOP, fill=tk.X)
         
         # tiny divider
