@@ -20,15 +20,20 @@ panel_1.add(label)
 textField1 = Entry()
 panel_1.add(textField1)
 
+enterButton = Button(text="Submit")
+enterButton.pack()
+
 panel_2 = PanedWindow(panel_1, orient=VERTICAL, bd=4, relief="raised", bg="blue")
 panel_1.add(panel_2)
 
-top = Label(panel_2, text="Top Panel")
+top = Label(panel_2, text="Status Panel")
 panel_2.add(top)
 
-bottom = Label(panel_2, text="Bottom Panel")
+bottom = Label(panel_2, text="Display Panel")
 panel_2.add(bottom)
 
+quitButton = Button(text="Quit")
+quitButton.pack()
 
 # Start the GUI event loop
 root.mainloop()
