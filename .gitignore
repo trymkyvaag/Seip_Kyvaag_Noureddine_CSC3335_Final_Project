@@ -8,3 +8,4 @@ trigram_file.txt
 Convolution.py
 data/GloVe/glove*
 .venv/
+.env/
