@@ -2,6 +2,7 @@ import re
 import pandas as pd
 import numpy as np
 pd.options.mode.chained_assignment = None
+pd.options.mode.chained_assignment = None
 
 #Lemmatizer (change word form. Better -> Good, Houses -> House)
 from nltk.stem import WordNetLemmatizer
@@ -15,29 +16,53 @@ class Data():
         self.PARSED_LABEL = 'oh_label'
         
         self.stopwords = sw.words('english')
+        self.stopwords.extend(['from', 'subject', 're', 'edu', 'use'])
         self.ltzr = WordNetLemmatizer()
         self.load_concatenated_tweets()
         self.load_parsed_tweets()
         #self.parsed_tweets.style.set_properties(**{'text-align': 'left'})
+        
 
     def load_concatenated_tweets(self) -> None:
         self.ds_1 = pd.read_csv('data/cyberbullying_tweets.csv')
         self.ds_2 = pd.read_csv('data/FinalBalancedDataset.csv')
         self.ds_3 = pd.read_csv('data/twitter_parsed_dataset.csv')
-        self.concatenated_tweets = pd.concat([self.ds_1['tweet_text'], self.ds_2['tweet'], self.ds_3['Text']], ignore_index=True)
-        #print(self.ds_2.head())
-        # self.processed_Data = self.__process_data__()
+        self.ds_4 = pd.read_csv('data/cyberbullying_tweets_2.csv')
+        self.ds_5 = pd.read_csv('data/cyberbullying-dataset.csv')
+        self.concatenated_tweets = pd.concat([self.ds_1['tweet_text'], 
+                                              self.ds_2['tweet'], 
+                                              self.ds_3['Text'], 
+                                              self.ds_4['headline'],
+                                              self.ds_5['TEXT']], 
+                                             ignore_index=True)
+        self.concatenated_tweets = pd.DataFrame(self.concatenated_tweets).rename(columns={0: 'Text'})
 
     def load_parsed_tweets(self):
         self.parsed_tweets = pd.read_csv('data/twitter_parsed_dataset.csv')
+        
+    def clean_parsed(self):
+        self.parsed_tweets = self.clean_tweets(self.parsed_tweets, 'Text')
+        
+    def clean_concatenated(self):
+        self.concatenated_tweets = self.clean_tweets(self.concatenated_tweets, 'Text')
 
-        for idx, tweet in enumerate(self.parsed_tweets[self.PARSED_TWEET]):
+    def clean_tweets(self, tweets_to_clean, column_name: str):        
+        for idx, tweet in enumerate(tweets_to_clean[column_name]):
             tweet = str(tweet)
-            if(tweet.startswith('RT')):
+            # Counts complete retweets as their own tweet.
+            if(tweet.startswith('RT ')):
                 tweet = tweet[2:]
-            self.parsed_tweets[self.PARSED_TWEET][idx] = self.clean_tweet(tweet)
+            # If the tweet contains a retweet, splits them up into separate tweets.
+            elif(tweet.__contains__('RT')):
+                tweet = tweet.split('RT')[0]
+            else:
+                tweets_to_clean[column_name][idx] = self.clean_tweet(tweet)
             
-        # self.parsed_tweets[self.PARSED_LABEL].replace({'none': 0, 'racism': 1, 'sexism': 2}, inplace = True )
+            # Removes underscores from the tweet.
+            if(tweet.__contains__('_')):
+                tweet = tweet.replace('_', ' ')
+                
+        return tweets_to_clean
         
 
     def clean_tweet(self, tweet: str):
@@ -53,7 +78,7 @@ class Data():
         temp = tweet.lower()
         
         # Nothing is done with these at the moment, but they could be useful for autotagging tweets.
-        hashtags = self.hashtag_extract(tweet)
+        # hashtags = self.hashtag_extract(tweet)
         
         temp = re.sub("'", "", temp) # to avoid removing contractions in english
         temp = re.sub("@[A-Za-z0-9_]+","", temp)
@@ -91,28 +116,7 @@ class Data():
             if(word.startswith('#')):
                 hashtags.append(word)
         
-        return hashtags
-
-    #This needs to make sets make sense in comparison
-    def __process_data__(self):
-        processed_data = []
-        
-        for tweet in self.combined_tweets:
-            tweet = tweet.lower()
-            if 'rt' in tweet:
-                tweet = tweet.split('rt')[0]
-            processed_data.append(tweet)
-            #print(tweet)
-        self.processed_data = pd.DataFrame(processed_data)
-        pass
-    
-    def get_unique_words(self, column):
-        words = {}
-        for row in column:
-            for word in row.split(' '):
-                words.update({word: None})
-            
-        return words
+        return hashtags   
 
 '''
 d = Data()
