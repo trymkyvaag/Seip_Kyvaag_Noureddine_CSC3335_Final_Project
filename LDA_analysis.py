@@ -1,5 +1,6 @@
 from Toakanize import Toakanize
 import spacy
+import nltk
 #nltk.download(), must be ran once
 from pprint import pprint
 #https://www.machinelearningplus.com/nlp/topic-modeling-gensim-python/
