@@ -48,11 +48,9 @@ class Data():
             # Counts complete retweets as their own tweet.
             if(tweet.startswith('RT ')):
                 tweet = tweet[2:]
-            
             # If the tweet contains a retweet, splits them up into separate tweets.
-            if(tweet.__contains__('RT')):
-                for split_tweet in tweet.split('RT'):
-                    tweets_to_clean.append(split_tweet)
+            elif(tweet.__contains__('RT')):
+                tweet = tweet.split('RT')[0]
             else:
                 tweets_to_clean[column_name][idx] = self.clean_tweet(tweet)
             

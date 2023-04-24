@@ -4,8 +4,10 @@ class analyse_tweet():
 
     def __init__(self) -> None:
         self.lda = LDA_analysis(Toakanize())
-        #self.lda.find_best_k(40, 2, 6)
+        self.lda.find_best_k(25, 2, 6)
         pass
 
+    def analyze_tweet(tweet: str):
+        pass
 
 la = analyse_tweet()

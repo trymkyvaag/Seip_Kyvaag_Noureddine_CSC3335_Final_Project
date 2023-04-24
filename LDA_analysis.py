@@ -27,9 +27,9 @@ class LDA_analysis():
         self.__create_ngrams__()
         self.__clean__()
         self.__create_word_dict__()
-        self.__LDA__(15)
+        self.__LDA__(10)
         self.__complexity__()
-        #self.find_best_k(40, 2, 6)
+        #self.find_best_k(24, 2, 6)
         self.test()
 
         # Define functions for stopwords, bigrams, trigrams and lemmatization
@@ -92,7 +92,7 @@ class LDA_analysis():
                                            random_state=100,
                                            update_every=1,
                                            chunksize=2000,
-                                           passes=200,
+                                           passes=50,
                                            alpha='auto',
                                            per_word_topics=True)
         
@@ -105,6 +105,11 @@ class LDA_analysis():
         print('\nCoherence Score: ', self.coherence_lda, '\n')
     
     def find_best_k(self, limit, start = None, step = None):
+           #Values to adjust
+        self.model_rstate = 100
+        self.model_update_every = 1
+        self.model_chunksize = 1000
+        self.model_passes = 50
         print('\n\n-----Model params used: -----\n')
         print(f'\tRandom state seed: {self.model_rstate}')
         print(f'\tUpdate chunk every: {self.model_update_every}')
@@ -140,11 +145,6 @@ class LDA_analysis():
         model_list = []
         for num_topics in range(start, limit, step):
 
-            #Values to adjust
-            self.model_rstate = 100
-            self.model_update_every = 1
-            self.model_chunksize = 1000
-            self.model_passes = 200
          
             LDA_model = gensim.models.ldamodel.LdaModel(corpus=self.corpus,
                                            id2word=self.id2word,
