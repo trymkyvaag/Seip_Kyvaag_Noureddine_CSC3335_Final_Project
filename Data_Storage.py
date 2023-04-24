@@ -56,7 +56,7 @@ class Data():
             
             # Removes underscores from the tweet.
             if(tweet.__contains__('_')):
-                tweet.replace('_', ' ')
+                tweet = tweet.replace('_', ' ')
                 
         return tweets_to_clean
         
