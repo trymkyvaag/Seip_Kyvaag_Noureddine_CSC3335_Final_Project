@@ -22,16 +22,22 @@ stop_words = stopwords.words('english')
 stop_words.extend(['from', 'subject', 're', 'edu', 'use'])
 
 class LDA_analysis():
-    def __init__(self, ta: Toakanize) -> None:
-        self.ta_class = ta
-        self.__create_ngrams__()
-        self.__clean__()
-        self.__create_word_dict__()
-        self.__LDA__(8)
-        self.__complexity__()
-        self.test()
+    def __init__(self, load_model = False) -> None:
+        if not load_model:
+            self.ta_class = Toakanize()
+            self.__create_ngrams__()
+            self.__clean__()
+            self.__create_word_dict__()
+            self.__LDA__(8)
+            self.__complexity__()
+            self.test()
+        else:
+            self.num_topics = 8
+            self.LDA_model = self.load_model()
 
         # Define functions for stopwords, bigrams, trigrams and lemmatization
+
+    
     def remove_stopwords(self,texts):
         return [[word for word in simple_preprocess(str(doc)) if word not in stop_words] for doc in texts]
 
