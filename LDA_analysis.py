@@ -27,9 +27,8 @@ class LDA_analysis():
         self.__create_ngrams__()
         self.__clean__()
         self.__create_word_dict__()
-        self.__LDA__(10)
+        self.__LDA__(8)
         self.__complexity__()
-        #self.find_best_k(24, 2, 6)
         self.test()
 
         # Define functions for stopwords, bigrams, trigrams and lemmatization
@@ -95,11 +94,15 @@ class LDA_analysis():
                                            passes=50,
                                            alpha='auto',
                                            per_word_topics=True)
+        self.LDA_model.save('lda.model')
         
+    def load_model(self):
+       return gensim.models.LdaModel.load('lda.model')
+    
     def __complexity__(self):
         print('-----LDA coherence-----\n')
-        print('\nPerplexity: ', self.LDA_model.log_perplexity(self.corpus))  # a measure of how good the model is. lower the better.
-        # Compute Coherence Score, using umass score since reccomended by: https://www.baeldung.com/cs/topic-modeling-coherence-score
+        print('\nPerplexity: ', self.LDA_model.log_perplexity(self.corpus))  # a measure of how good the model is. lower abs the better.
+        # Compute Coherence Score, using umass score since reccomended by: https://www.baeldung.com/cs/topic-modeling-coherence-score 
         self.coherence_model_lda = CoherenceModel(model=self.LDA_model, texts=self.data_lemmatized, dictionary=self.id2word, coherence='u_mass')
         self.coherence_lda = self.coherence_model_lda.get_coherence()
         print('\nCoherence Score: ', self.coherence_lda, '\n')
@@ -126,7 +129,7 @@ class LDA_analysis():
 
     def __compute_coherence_values__(self, limit, start=2, step=3):
         """
-        Compute c_v coherence for various number of topics
+        Compute umass coherence for various number of topics
 
         Parameters:
         ----------
