@@ -32,8 +32,10 @@ class LDA_analysis():
             self.__create_word_dict__()
             self.__LDA__(8)
             self.__complexity__()
-            self.test()
+            #self.test()
         else:
+            print('-----Using saved model and corpus----\n')
+           # self.ta_class = Toakanize()
             self.num_topics = 8
             self.LDA_model = self.load_model()
 

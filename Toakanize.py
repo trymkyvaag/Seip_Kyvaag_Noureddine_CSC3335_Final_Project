@@ -17,7 +17,7 @@ class Toakanize:
         self.__toakanize__()
 
     def __toakanize__(self):
-        print('-----Toakanizing, vol 1-----')
+        print('-----Toakanizing-----')
         self.toakanized_data = list(self.tweets_to_words())
 
     def tweets_to_words(self):
