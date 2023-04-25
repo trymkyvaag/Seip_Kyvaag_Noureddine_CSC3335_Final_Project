@@ -1,3 +1,4 @@
+import pickle
 from Toakanize import Toakanize
 import spacy
 import nltk
@@ -89,6 +90,7 @@ class LDA_analysis():
 
         # Term Document Frequency
         self.corpus = [self.id2word.doc2bow(text) for text in texts]
+        pickle.dump(self.corpus, open("corpus.p", "wb")) 
 
     def __LDA__(self, num_topics):
         self.num_topics = num_topics
