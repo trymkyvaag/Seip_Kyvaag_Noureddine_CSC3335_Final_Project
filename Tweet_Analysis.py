@@ -33,38 +33,16 @@ class analyse_tweet():
             or print distrubutions for given tweet
         '''
         if print_readable:   
+            print('The probabilities for different topics:\n')
+            #Get topic and corresponding prob and print
+            '''
+                Add functionality for potential topics we do not want
+            '''
             pass
         else:
             for topic in topics:
                 print('\n-----Print probabilites-----\n')
                 pprint(topic)
-        '''
-        for idx, topics in enumerate(self.lda.LDA_model.show_topics()):
-            wp = self.lda.LDA_model.show_topic(idx)
-            topic_keywords = ", ".join([word for word, prop in wp])
-            sent_topics_df = sent_topics_df.append(pd.Series([int(idx), topic_keywords]), ignore_index=True)
-            pass
-        
-        sent_topics_df = pd.DataFrame()
-        # Get main topic in each document
-        for i, row in enumerate(self.lda.LDA_model[self.corpus]):
-            row = sorted(row, key=lambda x: (x[0]), reverse=True)
-            # Get the Dominant topic, Perc Contribution and Keywords for each document
-            for j, (topic_num, prop_topic) in enumerate(row):
-                if j == 0:  # => dominant topic
-                    wp = self.lda.LDA_model.show_topic(topic_num)
-                    topic_keywords = ", ".join([word for word, prop in wp])
-                    sent_topics_df = sent_topics_df.append(pd.Series([int(topic_num), round(prop_topic,4), topic_keywords]), ignore_index=True)
-                else:
-                    break
-        sent_topics_df.columns = ['Dominant_Topic', 'Perc_Contribution', 'Topic_Keywords']
-
-        # Add original text to the end of the output
-        contents = pd.Series(self.ta_class.data)
-        sent_topics_df = pd.concat([sent_topics_df, contents], axis=1)
-        return(sent_topics_df)
-        '''
-        
 
     def print_all_topics(self):
         '''
