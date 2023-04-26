@@ -51,7 +51,7 @@ class Data():
         return tweets_to_clean
         
 
-    def clean_tweet(tweet: str):
+    def clean_tweet(self, tweet: str):
         """
             This function was taken from https://catriscode.com/2021/05/01/tweets-cleaning-with-python/
 
@@ -60,18 +60,18 @@ class Data():
 
         Returns:
             str: The cleaned tweet.
-        """
-        # Counts complete retweets as their own tweet.
-        if(tweet.startswith('RT ')):
-            tweet = tweet[2:]
-        
+        """        
         if type(tweet) == float:
             return ""
         temp = tweet.lower()
         
+        # Counts complete retweets as their own tweet.
+        if(temp.startswith('RT ')):
+            temp = temp[2:]
+        
         # If the tweet contains a retweet, splits them up into separate tweets.
-        if(tweet.__contains__('RT')):
-                tweet = tweet.split('RT')[0]
+        if(temp.__contains__('RT')):
+                temp = temp.split('RT')[0]
         
         temp = re.sub("'", "", temp) # to avoid removing contractions in english
         temp = re.sub("@[A-Za-z0-9_]+","", temp)
@@ -85,12 +85,12 @@ class Data():
         temp = " ".join(word for word in temp)
         
         # Removes underscores from the tweet.
-        if(tweet.__contains__('_')):
-            tweet = tweet.replace('_', ' ')
+        if(temp.__contains__('_')):
+            temp = temp.replace('_', ' ')
             
         # Handles cases like 'runn ing'.
-        if(tweet.__contains__(' ing ') or tweet.endswith(' ing')):
-            tweet = re.sub(' ing', 'ing', tweet)
+        if(temp.__contains__(' ing ') or temp.endswith(' ing') or temp.endswith(' ing ')):
+            temp = temp.replace(' ing', 'ing')
         
         return temp
 
@@ -120,11 +120,4 @@ class Data():
             if(word.startswith('#')):
                 hashtags.append(word)
         
-        return hashtags   
-
-
-d = Data()
-# d.load_concatenated_tweets()
-print(d.clean_tweet('runn ing around'))
-print(d.clean_tweet('runn ing'))
-
+        return hashtags
