@@ -8,7 +8,10 @@
     Inspired by: https://www.geeksforgeeks.org/gui-chat-application-using-tkinter-in-python/
 """
 
+import re
 import tkinter as tk
+from Data_Storage import Data
+from Data import clean_tweet
 
 BG_COLOR = "#0E1111"
 TEXT_COLOR = "#FFFFFF"
@@ -70,8 +73,8 @@ class CyberDetect:
      
     def _on_enter_pressed(self, event):
         msg = self.msg_entry.get()
-        if()
-        self._insert_message(msg, "Tweet")
+        if(re.sub(' ', '', msg) != ''):
+            self._insert_message(clean_tweet(msg), "Tweet")
         
     def _insert_message(self, message, sender):
         self.text_widget.configure(state=tk.NORMAL)
