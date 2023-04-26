@@ -1,4 +1,6 @@
 venv
 .env
+.venv
 data/mallet-2.0.8
+*.pyc
 tempfile*
