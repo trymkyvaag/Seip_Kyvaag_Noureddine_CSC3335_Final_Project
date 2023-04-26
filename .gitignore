@@ -1,1 +1,4 @@
-tempfile_1.py
+venv
+.env
+data/mallet-2.0.8
+tempfile*
