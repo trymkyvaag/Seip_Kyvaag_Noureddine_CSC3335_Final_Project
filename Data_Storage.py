@@ -45,23 +45,13 @@ class Data():
     def clean_tweets(self, tweets_to_clean, column_name: str):        
         for idx, tweet in enumerate(tweets_to_clean[column_name]):
             tweet = str(tweet)
-            # Counts complete retweets as their own tweet.
-            if(tweet.startswith('RT ')):
-                tweet = tweet[2:]
-            # If the tweet contains a retweet, splits them up into separate tweets.
-            elif(tweet.__contains__('RT')):
-                tweet = tweet.split('RT')[0]
-            else:
-                tweets_to_clean[column_name][idx] = self.clean_tweet(tweet)
             
-            # Removes underscores from the tweet.
-            if(tweet.__contains__('_')):
-                tweet = tweet.replace('_', ' ')
+            tweets_to_clean[column_name][idx] = self.clean_tweet(tweet)
                 
         return tweets_to_clean
         
 
-    def clean_tweet(self, tweet: str):
+    def clean_tweet(tweet: str):
         """
             This function was taken from https://catriscode.com/2021/05/01/tweets-cleaning-with-python/
 
@@ -71,12 +61,17 @@ class Data():
         Returns:
             str: The cleaned tweet.
         """
+        # Counts complete retweets as their own tweet.
+        if(tweet.startswith('RT ')):
+            tweet = tweet[2:]
+        
         if type(tweet) == float:
             return ""
         temp = tweet.lower()
         
-        # Nothing is done with these at the moment, but they could be useful for autotagging tweets.
-        # hashtags = self.hashtag_extract(tweet)
+        # If the tweet contains a retweet, splits them up into separate tweets.
+        if(tweet.__contains__('RT')):
+                tweet = tweet.split('RT')[0]
         
         temp = re.sub("'", "", temp) # to avoid removing contractions in english
         temp = re.sub("@[A-Za-z0-9_]+","", temp)
@@ -88,6 +83,15 @@ class Data():
         temp = temp.split()
         temp = [w for w in temp if not w in self.stopwords]
         temp = " ".join(word for word in temp)
+        
+        # Removes underscores from the tweet.
+        if(tweet.__contains__('_')):
+            tweet = tweet.replace('_', ' ')
+            
+        # Handles cases like 'runn ing'.
+        if(tweet.__contains__(' ing ') or tweet.endswith(' ing')):
+            tweet = re.sub(' ing', 'ing', tweet)
+        
         return temp
 
     def lemmatization(self, tweet: str):
@@ -118,8 +122,8 @@ class Data():
         
         return hashtags   
 
-'''
+
 d = Data()
-d.load_parsed_tweets()
-print(d.parsed_tweets)
-'''
+# d.load_concatenated_tweets()
+print(d.cl)
+
