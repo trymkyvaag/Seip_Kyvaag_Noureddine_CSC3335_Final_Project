@@ -1,5 +1,7 @@
+import pickle
 from Toakanize import Toakanize
 import spacy
+import nltk
 #nltk.download(), must be ran once
 from pprint import pprint
 #https://www.machinelearningplus.com/nlp/topic-modeling-gensim-python/
@@ -22,17 +24,26 @@ stop_words = stopwords.words('english')
 stop_words.extend(['from', 'subject', 're', 'edu', 'use'])
 
 class LDA_analysis():
-    def __init__(self, ta: Toakanize) -> None:
-        self.ta_class = ta
-        self.__create_ngrams__()
-        self.__clean__()
-        self.__create_word_dict__()
-        self.__LDA__(10)
-        self.__complexity__()
-        #self.find_best_k(40, 2, 6)
-        self.test()
+    def __init__(self, load_model) -> None:
+        self.nlp = spacy.load("en_core_web_sm")
+        if not load_model:
+            self.ta_class = Toakanize()
+            self.__create_ngrams__()
+            self.__clean__()
+            self.__create_word_dict__()
+            self.__LDA__(8)
+            self.__complexity__()
+            #self.test()
+        else:
+            print('\n\n\t-----Using saved model and corpus----\n')
+           # self.ta_class = Toakanize()
+           # self.__clean__()
+            self.num_topics = 8
+            self.LDA_model = self.load_model()
 
         # Define functions for stopwords, bigrams, trigrams and lemmatization
+
+    
     def remove_stopwords(self,texts):
         return [[word for word in simple_preprocess(str(doc)) if word not in stop_words] for doc in texts]
 
@@ -58,17 +69,18 @@ class LDA_analysis():
         self.bigram_mod = gensim.models.phrases.Phraser(self.bigram)
         self.trigram_mod = gensim.models.phrases.Phraser(self.trigram)
 
-    def __clean__(self):
-        print('-----Cleaning tweets-----\n')
-        # Remove Stop Words
+    def __clean__(self, loaded_model = True):
+        print('\n-----Cleaning tweets-----\n')
+   
+            # Remove Stop Words
         self.data_words_nostops = self.remove_stopwords(self.ta_class.toakanized_data)
 
-        # Form Bigrams
+            # Form Bigrams
         self.data_words_bigrams = self.make_bigrams(self.data_words_nostops)
 
         # Initialize spacy 'en' model, keeping only tagger component (for efficiency)
         # python3 -m spacy download en
-        self.nlp = spacy.load("en_core_web_sm")
+        #self.nlp = spacy.load("en_core_web_sm")
 
         # Do lemmatization keeping only noun, adj, vb, adv
         print('-----Lemmaztion only NN, A, V, AV -----\n')
@@ -83,6 +95,7 @@ class LDA_analysis():
 
         # Term Document Frequency
         self.corpus = [self.id2word.doc2bow(text) for text in texts]
+        pickle.dump(self.corpus, open("corpus.p", "wb")) 
 
     def __LDA__(self, num_topics):
         self.num_topics = num_topics
@@ -91,20 +104,31 @@ class LDA_analysis():
                                            num_topics=self.num_topics, 
                                            random_state=100,
                                            update_every=1,
-                                           chunksize=4000,
-                                           passes=200,
+                                           chunksize=10000,
+                                           passes=100,
                                            alpha='auto',
-                                           per_word_topics=True)
+                                           per_word_topics=True,
+                                           minimum_probability=0.01 # THis is not tested yet
+                                           )
+        self.LDA_model.save('lda.model')
         
+    def load_model(self):
+       return gensim.models.LdaModel.load('lda.model')
+    
     def __complexity__(self):
         print('-----LDA coherence-----\n')
-        print('\nPerplexity: ', self.LDA_model.log_perplexity(self.corpus))  # a measure of how good the model is. lower the better.
-        # Compute Coherence Score, using umass score since reccomended by: https://www.baeldung.com/cs/topic-modeling-coherence-score
+        print('\nPerplexity: ', self.LDA_model.log_perplexity(self.corpus))  # a measure of how good the model is. lower abs the better.
+        # Compute Coherence Score, using umass score since reccomended by: https://www.baeldung.com/cs/topic-modeling-coherence-score 
         self.coherence_model_lda = CoherenceModel(model=self.LDA_model, texts=self.data_lemmatized, dictionary=self.id2word, coherence='u_mass')
         self.coherence_lda = self.coherence_model_lda.get_coherence()
         print('\nCoherence Score: ', self.coherence_lda, '\n')
     
     def find_best_k(self, limit, start = None, step = None):
+           #Values to adjust
+        self.model_rstate = 100
+        self.model_update_every = 1
+        self.model_chunksize = 1000
+        self.model_passes = 50
         print('\n\n-----Model params used: -----\n')
         print(f'\tRandom state seed: {self.model_rstate}')
         print(f'\tUpdate chunk every: {self.model_update_every}')
@@ -121,7 +145,7 @@ class LDA_analysis():
 
     def __compute_coherence_values__(self, limit, start=2, step=3):
         """
-        Compute c_v coherence for various number of topics
+        Compute umass coherence for various number of topics
 
         Parameters:
         ----------
@@ -140,11 +164,6 @@ class LDA_analysis():
         model_list = []
         for num_topics in range(start, limit, step):
 
-            #Values to adjust
-            self.model_rstate = 100
-            self.model_update_every = 1
-            self.model_chunksize = 1000
-            self.model_passes = 200
          
             LDA_model = gensim.models.ldamodel.LdaModel(corpus=self.corpus,
                                            id2word=self.id2word,
