@@ -104,11 +104,11 @@ class LDA_analysis():
                                            num_topics=self.num_topics, 
                                            random_state=100,
                                            update_every=1,
-                                           chunksize=10000,
-                                           passes=100,
+                                           chunksize=50000,
+                                           passes=200,
                                            alpha='auto',
                                            per_word_topics=True,
-                                           minimum_probability=0.01 # THis is not tested yet
+                                           minimum_probability=0.015 # THis is not tested yet
                                            )
         self.LDA_model.save('lda.model')
         
