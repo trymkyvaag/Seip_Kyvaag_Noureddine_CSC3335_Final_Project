@@ -24,7 +24,7 @@ stop_words = stopwords.words('english')
 stop_words.extend(['from', 'subject', 're', 'edu', 'use'])
 
 class LDA_analysis():
-    def __init__(self, load_model = False) -> None:
+    def __init__(self, load_model) -> None:
         self.nlp = spacy.load("en_core_web_sm")
         if not load_model:
             self.ta_class = Toakanize()
@@ -109,7 +109,7 @@ class LDA_analysis():
                                            passes=50,
                                            alpha='auto',
                                            per_word_topics=True,
-                                           minimum_probability=0.03
+                                           minimum_probability=0.03 # THis is not tested yet
                                            )
         self.LDA_model.save('lda.model')
         

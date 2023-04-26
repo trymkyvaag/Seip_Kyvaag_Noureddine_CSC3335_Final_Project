@@ -7,15 +7,14 @@ import pickle
 
 class analyse_tweet():
 
-    def __init__(self) -> None:
-        self.lda = LDA_analysis(load_model=True)
+    def __init__(self,load_model = True) -> None:
+        self.lda = LDA_analysis(load_model)
         self.corpus = pickle.load(open("corpus.p", "rb"))
-
-        #self.print_topics()
         '''
         Decided on 8 topics for now    
             self.lda.find_best_k(25, 2, 6)
         '''
+        self.topic_names = ['T1','T2','T3','T4','T5','T6','T7','T8'] #make array of topic description
 
         pass
 
@@ -25,14 +24,15 @@ class analyse_tweet():
         new_corp = [self.lda.LDA_model.id2word.doc2bow(text) 
                     for text in lem_data]
         word_prob = self.lda.LDA_model[new_corp]
-        topic_str = self.__printable_topics__(word_prob)
+        topic_str = self.__printable_topics__(word_prob, print_readable)
         return topic_str
     
     def __printable_topics__(self,topics, print_readable = True):
         '''
-            Turn topic probabilities to a human readable format
+            Turn topic probabilities to a human readable format 
+            or print distrubutions for given tweet
         '''
-        if print_readable:
+        if print_readable:   
             pass
         else:
             for topic in topics:
@@ -66,9 +66,9 @@ class analyse_tweet():
         '''
         
 
-    def print_topics(self):
+    def print_all_topics(self):
         '''
-            Maybe have this print to the gui?
+            Get just the numerical distrubution of topics
         '''
         pprint(self.lda.LDA_model.show_topics())
 
