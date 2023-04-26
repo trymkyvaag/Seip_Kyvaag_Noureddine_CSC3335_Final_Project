@@ -35,7 +35,7 @@ class LDA_analysis():
             self.__complexity__()
             #self.test()
         else:
-            print('-----Using saved model and corpus----\n')
+            print('\n\n\t-----Using saved model and corpus----\n')
            # self.ta_class = Toakanize()
            # self.__clean__()
             self.num_topics = 8
@@ -69,13 +69,15 @@ class LDA_analysis():
         self.bigram_mod = gensim.models.phrases.Phraser(self.bigram)
         self.trigram_mod = gensim.models.phrases.Phraser(self.trigram)
 
-    def __clean__(self):
+    def __clean__(self, loaded_model = True):
         print('\n-----Cleaning tweets-----\n')
-        # Remove Stop Words
-        self.data_words_nostops = self.remove_stopwords(self.ta_class.toakanized_data)
+        if not loaded_model:
+   
+            # Remove Stop Words
+            self.data_words_nostops = self.remove_stopwords(self.ta_class.toakanized_data)
 
-        # Form Bigrams
-        self.data_words_bigrams = self.make_bigrams(self.data_words_nostops)
+            # Form Bigrams
+            self.data_words_bigrams = self.make_bigrams(self.data_words_nostops)
 
         # Initialize spacy 'en' model, keeping only tagger component (for efficiency)
         # python3 -m spacy download en
@@ -106,7 +108,9 @@ class LDA_analysis():
                                            chunksize=2000,
                                            passes=50,
                                            alpha='auto',
-                                           per_word_topics=True)
+                                           per_word_topics=True,
+                                           minimum_probability=0.03
+                                           )
         self.LDA_model.save('lda.model')
         
     def load_model(self):

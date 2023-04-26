@@ -10,8 +10,6 @@ class analyse_tweet():
     def __init__(self) -> None:
         self.lda = LDA_analysis(load_model=True)
         self.corpus = pickle.load(open("corpus.p", "rb"))
-        self.test = self.analyze_dataset()
-        print(self.test.head())
 
         #self.print_topics()
         '''
@@ -21,19 +19,25 @@ class analyse_tweet():
 
         pass
 
-    def analyze_tweet(self, tweet = str):
+    def analyze_tweet(self, tweet = str, print_readable = True):
         tweet = [[tweet]]
         lem_data = self.lda.lemmatization(tweet)
         new_corp = [self.lda.LDA_model.id2word.doc2bow(text) 
                     for text in lem_data]
         word_prob = self.lda.LDA_model[new_corp]
-        return word_prob
+        topic_str = self.__printable_topics__(word_prob)
+        return topic_str
     
-    def __printable_topics__(self, topics):
+    def __printable_topics__(self,topics, print_readable = True):
         '''
             Turn topic probabilities to a human readable format
         '''
-        pass
+        if print_readable:
+            pass
+        else:
+            for topic in topics:
+                print('\n-----Print probabilites-----\n')
+                pprint(topic)
         '''
         for idx, topics in enumerate(self.lda.LDA_model.show_topics()):
             wp = self.lda.LDA_model.show_topic(idx)
@@ -69,3 +73,4 @@ class analyse_tweet():
         pprint(self.lda.LDA_model.show_topics())
 
 la = analyse_tweet()
+pass
