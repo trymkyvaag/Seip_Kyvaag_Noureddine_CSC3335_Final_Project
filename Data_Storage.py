@@ -125,5 +125,5 @@ class Data():
 
 d = Data()
 # d.load_concatenated_tweets()
-print(d.cl)
+#print(d.cl)
 

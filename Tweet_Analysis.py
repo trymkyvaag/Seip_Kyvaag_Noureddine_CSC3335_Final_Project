@@ -52,6 +52,6 @@ class analyse_tweet():
         pprint(self.lda.LDA_model.show_topics())
 
 la = analyse_tweet(load_model=True)
-#la.print_all_topics()
-la.analyze_tweet('want block name care hear help', print_readable=False)
+la.print_all_topics()
+la.analyze_tweet('This is a tweet that harms nobody', print_readable=False)
 pass
