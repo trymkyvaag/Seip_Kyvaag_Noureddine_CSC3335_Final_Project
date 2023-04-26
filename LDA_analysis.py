@@ -25,6 +25,7 @@ stop_words.extend(['from', 'subject', 're', 'edu', 'use'])
 
 class LDA_analysis():
     def __init__(self, load_model = False) -> None:
+        self.nlp = spacy.load("en_core_web_sm")
         if not load_model:
             self.ta_class = Toakanize()
             self.__create_ngrams__()
@@ -36,6 +37,7 @@ class LDA_analysis():
         else:
             print('-----Using saved model and corpus----\n')
            # self.ta_class = Toakanize()
+           # self.__clean__()
             self.num_topics = 8
             self.LDA_model = self.load_model()
 
@@ -77,7 +79,7 @@ class LDA_analysis():
 
         # Initialize spacy 'en' model, keeping only tagger component (for efficiency)
         # python3 -m spacy download en
-        self.nlp = spacy.load("en_core_web_sm")
+        #self.nlp = spacy.load("en_core_web_sm")
 
         # Do lemmatization keeping only noun, adj, vb, adv
         print('-----Lemmaztion only NN, A, V, AV -----\n')

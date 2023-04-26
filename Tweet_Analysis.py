@@ -21,14 +21,21 @@ class analyse_tweet():
 
         pass
 
-    def analyze_dataset(self):
+    def analyze_tweet(self, tweet = str):
+        tweet = [[tweet]]
+        lem_data = self.lda.lemmatization(tweet)
+        new_corp = [self.lda.LDA_model.id2word.doc2bow(text) 
+                    for text in lem_data]
+        word_prob = self.lda.LDA_model[new_corp]
+        return word_prob
+
         '''
         for idx, topics in enumerate(self.lda.LDA_model.show_topics()):
             wp = self.lda.LDA_model.show_topic(idx)
             topic_keywords = ", ".join([word for word, prop in wp])
             sent_topics_df = sent_topics_df.append(pd.Series([int(idx), topic_keywords]), ignore_index=True)
             pass
-        '''
+        
         sent_topics_df = pd.DataFrame()
         # Get main topic in each document
         for i, row in enumerate(self.lda.LDA_model[self.corpus]):
@@ -47,6 +54,7 @@ class analyse_tweet():
         contents = pd.Series(self.ta_class.data)
         sent_topics_df = pd.concat([sent_topics_df, contents], axis=1)
         return(sent_topics_df)
+        '''
         
 
     def print_topics(self):
