@@ -1,3 +1,13 @@
+"""
+    Authors: Jad Noureddine, Garald Seip
+    Spring 2023
+    CSC 3335
+    
+    This file implements the front-end GUI of our project.
+    
+    Inspired by: https://www.geeksforgeeks.org/gui-chat-application-using-tkinter-in-python/
+"""
+
 import tkinter as tk
 
 BG_COLOR = "#0E1111"
@@ -60,6 +70,7 @@ class CyberDetect:
      
     def _on_enter_pressed(self, event):
         msg = self.msg_entry.get()
+        if()
         self._insert_message(msg, "Tweet")
         
     def _insert_message(self, message, sender):
