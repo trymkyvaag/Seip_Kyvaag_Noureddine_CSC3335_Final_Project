@@ -51,7 +51,7 @@ class Data():
         return tweets_to_clean
         
 
-    def clean_tweet(tweet: str):
+    def clean_tweet(self,tweet: str):
         """
             This function was taken from https://catriscode.com/2021/05/01/tweets-cleaning-with-python/
 
