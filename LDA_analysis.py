@@ -71,13 +71,12 @@ class LDA_analysis():
 
     def __clean__(self, loaded_model = True):
         print('\n-----Cleaning tweets-----\n')
-        if not loaded_model:
    
             # Remove Stop Words
-            self.data_words_nostops = self.remove_stopwords(self.ta_class.toakanized_data)
+        self.data_words_nostops = self.remove_stopwords(self.ta_class.toakanized_data)
 
             # Form Bigrams
-            self.data_words_bigrams = self.make_bigrams(self.data_words_nostops)
+        self.data_words_bigrams = self.make_bigrams(self.data_words_nostops)
 
         # Initialize spacy 'en' model, keeping only tagger component (for efficiency)
         # python3 -m spacy download en
@@ -105,11 +104,11 @@ class LDA_analysis():
                                            num_topics=self.num_topics, 
                                            random_state=100,
                                            update_every=1,
-                                           chunksize=2000,
-                                           passes=50,
+                                           chunksize=10000,
+                                           passes=100,
                                            alpha='auto',
-                                           per_word_topics=True#,
-                                           #minimum_probability=0.03 # THis is not tested yet
+                                           per_word_topics=True,
+                                           minimum_probability=0.01 # THis is not tested yet
                                            )
         self.LDA_model.save('lda.model')
         

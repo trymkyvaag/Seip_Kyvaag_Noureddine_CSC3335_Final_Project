@@ -9,7 +9,8 @@ class analyse_tweet():
 
     def __init__(self,load_model = True) -> None:
         self.lda = LDA_analysis(load_model)
-        self.corpus = pickle.load(open("corpus.p", "rb"))
+        self.print_all_topics()
+        #self.corpus = pickle.load(open("corpus.p", "rb"))
         '''
         Decided on 8 topics for now    
             self.lda.find_best_k(25, 2, 6)
@@ -33,7 +34,7 @@ class analyse_tweet():
             or print distrubutions for given tweet
         '''
         if print_readable:   
-            print('The probabilities for different topics:\n')
+            print('\nThe probabilities for different topics:\n')
             #Get topic and corresponding prob and print
             '''
                 Add functionality for potential topics we do not want
@@ -50,5 +51,6 @@ class analyse_tweet():
         '''
         pprint(self.lda.LDA_model.show_topics())
 
-la = analyse_tweet()
+la = analyse_tweet(load_model=True)
+#la.analyze_tweet('want block name care hear help')
 pass
