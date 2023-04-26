@@ -28,7 +28,12 @@ class analyse_tweet():
                     for text in lem_data]
         word_prob = self.lda.LDA_model[new_corp]
         return word_prob
-
+    
+    def __printable_topics__(self, topics):
+        '''
+            Turn topic probabilities to a human readable format
+        '''
+        pass
         '''
         for idx, topics in enumerate(self.lda.LDA_model.show_topics()):
             wp = self.lda.LDA_model.show_topic(idx)
