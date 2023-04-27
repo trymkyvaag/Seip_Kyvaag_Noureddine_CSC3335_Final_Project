@@ -15,7 +15,8 @@ class analyse_tweet():
         Decided on 8 topics for now    
             self.lda.find_best_k(25, 2, 6)
         '''
-        self.topic_names = ['T1','T2','T3','T4','T5','T6','T7','T8'] #make array of topic description
+        self.topic_names = [('Normal conversation', 0),('Gender based harrasment', 1),('Political conflicts and terrorism', 1)
+                            ,('Hate speech and discrimination', 1),('Racism/sexism', 1),('Encouragment', 0),('Religious harrasment and threaths ', 1),('Homophobia/Abelism', 1)] #make array of topic description
 
         pass
 
@@ -52,6 +53,6 @@ class analyse_tweet():
         pprint(self.lda.LDA_model.show_topics())
 
 la = analyse_tweet(load_model=True)
-la.print_all_topics()
-la.analyze_tweet('', print_readable=False)
-pass
+#la.print_all_topics()
+la.analyze_tweet('We need to stop bullying this is not a good thing.', print_readable=False)
+passh
