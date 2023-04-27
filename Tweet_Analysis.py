@@ -3,14 +3,14 @@ from Toakanize import Toakanize
 from pprint import pprint
 import pandas as pd 
 import pickle
-
+import tqdm
 
 class analyse_tweet():
 
     def __init__(self,load_model = True) -> None:
         self.lda = LDA_analysis(load_model)
         #self.print_all_topics()
-        #self.corpus = pickle.load(open("corpus.p", "rb"))
+        self.corpus = pickle.load(open("corpus.p", "rb"))
         '''
         Decided on 8 topics for now    
             self.lda.find_best_k(25, 2, 6)
@@ -53,5 +53,5 @@ class analyse_tweet():
 
 la = analyse_tweet(load_model=True)
 la.print_all_topics()
-la.analyze_tweet('This is a tweet that harms nobody', print_readable=False)
+la.analyze_tweet('', print_readable=False)
 pass
