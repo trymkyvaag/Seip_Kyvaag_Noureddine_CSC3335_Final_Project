@@ -11,16 +11,21 @@
 import re
 import tkinter as tk
 from Data_Storage import Data
-from Data import clean_tweet
+from Tweet_Analysis import analyse_tweet
 
-BG_COLOR = "#0E1111"
-TEXT_COLOR = "#FFFFFF"
+BLACK = "#0E1111"
+GRAY = '#2A2A2A'
+WHITE = "#FFFFFF"
+BLUE = '#57C8FF'
 FONT = "Helvetica 14"
 FONT_BOLD = "Helvetica 13 bold"
 
 class CyberDetect:
     
     def __init__(self):
+        self.model = analyse_tweet(True)
+        self.data = Data()
+        
         self.window = tk.Tk()
         self._setup_main_window()
         
@@ -28,26 +33,26 @@ class CyberDetect:
         self.window.mainloop()
         
     def _setup_main_window(self):
-        self.window.title("Cyberbullying Detector")
+        self.window.title("Tweet Analyzer")
         self.window.resizable(width=False, height=False)
-        self.window.configure(width=470, height=550, bg=BG_COLOR)
+        self.window.configure(width=470, height=550, bg=BLACK)
         
         # head label
-        head_label = tk.Label(self.window, bg=BG_COLOR, fg=TEXT_COLOR,
-                              text="Cyberbullying Detector", font=FONT_BOLD, pady=10)
+        head_label = tk.Label(self.window, bg=BLACK, fg=WHITE,
+                              text="Tweet Analyzer", font=FONT_BOLD, pady=10)
         head_label.pack(side=tk.TOP, fill=tk.X)
         
         # tiny divider
-        line = tk.Canvas(self.window, width=450, height=1, bg=TEXT_COLOR)
+        line = tk.Canvas(self.window, width=450, height=1, bg=WHITE)
         line.pack(pady=5)
         
         # chat display area
         chat_display_frame = tk.Frame(self.window)
         chat_display_frame.pack(side=tk.TOP, padx=5, pady=5)
-        chat_display_frame.configure(bg=BG_COLOR)
+        chat_display_frame.configure(bg=BLACK)
         
-        self.text_widget = tk.Text(chat_display_frame, width=50, height=25, bg=BG_COLOR, fg=TEXT_COLOR,
-                                    font=FONT, padx=10, pady=10)
+        self.text_widget = tk.Text(chat_display_frame, width=60, height=30, bg=BLACK, fg=WHITE,
+                                    font='TkFixedFont', padx=10, pady=10)
         self.text_widget.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         self.text_widget.configure(cursor="arrow", state=tk.DISABLED)
         
@@ -59,28 +64,111 @@ class CyberDetect:
         # message entry box
         msg_entry_frame = tk.Frame(self.window)
         msg_entry_frame.pack(side=tk.BOTTOM, padx=5, pady=5)
-        msg_entry_frame.configure(bg=BG_COLOR)
+        msg_entry_frame.configure(bg=BLACK)
         
-        self.msg_entry = tk.Entry(msg_entry_frame, bg=TEXT_COLOR, fg=BG_COLOR, font=FONT)
+        self.msg_entry = tk.Entry(msg_entry_frame, bg=GRAY, fg=WHITE, font=FONT)
         self.msg_entry.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=10, pady=10)
         self.msg_entry.focus()
         self.msg_entry.bind("<Return>", self._on_enter_pressed)
         
         # send button
-        send_button = tk.Button(msg_entry_frame, text="Submit", font=FONT_BOLD, width=20, bg=TEXT_COLOR, fg=BG_COLOR,
+        send_button = tk.Button(msg_entry_frame, text="Submit", font=FONT_BOLD, width=20, bg=BLUE, fg=BLACK,
                                 command=lambda: self._on_enter_pressed(None))
         send_button.pack(side=tk.LEFT, padx=10, pady=10)
      
     def _on_enter_pressed(self, event):
         msg = self.msg_entry.get()
         if(re.sub(' ', '', msg) != ''):
-            self._insert_message(clean_tweet(msg), "Tweet")
+        #     self._insert_message(data.clean_tweet(msg), "Tweet")
+            self._insert_message(msg, "Tweet", False)
+            
+            analysis = self.model.analyze_tweet(msg, True)
+            
+            self._insert_message(msg, "Analysis")
         
-    def _insert_message(self, message, sender):
+    def _insert_message(self, to_display, sender, left: bool = True):
         self.text_widget.configure(state=tk.NORMAL)
-        self.text_widget.insert(tk.END, sender + ": " + message + "\n\n")
+        
+        message = to_display
+        # Underline hack.
+        sender = sender + ' '
+        
+        if(left):
+            sender = "\u0332".join(sender)
+            message = self.left_align(message)
+        else:
+            orig_len = len(sender)
+            sender = "\u0332".join(sender)
+            
+            # Makes it 60 characters long.
+            while(orig_len < 60):
+                orig_len += 1
+                sender = ' ' + sender
+                
+            sender = '%60s' % sender
+            
+            message = self.right_align(message)
+            
+        self.text_widget.insert(tk.END, sender + "\n")
+        
+        # Displays message.
+        self.text_widget.insert(tk.END, message + "\n\n")
         self.text_widget.configure(state=tk.DISABLED)
         self.msg_entry.delete(0, tk.END)
+        
+    def left_align(self, to_align: str):
+        temp = to_align
+        final = []
+        
+        # Removes leading whitespace
+        while(temp.startswith(' ') and len(temp) > 1):
+            temp = temp[1:]
+        
+        while(len(temp) > 40):
+            curr_slice = temp[:40]
+            temp = temp[40:]
+            
+            index = curr_slice.rfind(' ')
+            if(index > -1 and index < 39):
+                temp = curr_slice[index:] + temp
+            
+            final.append(curr_slice)
+        
+            # Removes leading whitespace
+            while(temp.startswith(' ') and len(temp) > 1):
+                temp = temp[1:]
+        
+        final.append(temp)
+        
+        return '\n'.join(final)
+        
+    def right_align(self, to_align: str):
+        temp = to_align
+        final = []
+        
+        # Removes leading whitespace
+        while(temp.startswith(' ') and len(temp) > 1):
+            temp = temp[1:]
+        
+        while(len(temp) > 40):
+            curr_slice = temp[:40]
+            temp = temp[40:]
+            
+            index = curr_slice.rfind(' ')
+            if(index > -1 and index < 39):
+                temp = curr_slice[index:] + temp
+            
+            curr_slice = '                    ' + curr_slice
+            final.append(curr_slice)
+        
+            # Removes leading whitespace
+            while(temp.startswith(' ') and len(temp) > 1):
+                temp = temp[1:]
+        
+        temp = '                    ' + temp
+        final.append(temp)
+        
+        return '\n'.join(final)
 
 if __name__ == "__main__":
     app = CyberDetect()

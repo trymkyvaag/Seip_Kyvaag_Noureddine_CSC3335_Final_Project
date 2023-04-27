@@ -9,7 +9,7 @@ class analyse_tweet():
 
     def __init__(self,load_model = True) -> None:
         self.lda = LDA_analysis(load_model)
-        self.print_all_topics()
+        # self.print_all_topics()
         #self.corpus = pickle.load(open("corpus.p", "rb"))
         '''
         Decided on 8 topics for now    
@@ -39,7 +39,7 @@ class analyse_tweet():
             '''
                 Add functionality for potential topics we do not want
             '''
-            pass
+            return ""
         else:
             for topic in topics:
                 print('\n-----Print probabilites-----\n')
@@ -51,6 +51,6 @@ class analyse_tweet():
         '''
         pprint(self.lda.LDA_model.show_topics())
 
-la = analyse_tweet(load_model=True)
+# la = analyse_tweet(load_model=True)
 #la.analyze_tweet('want block name care hear help')
-pass
+# pass
