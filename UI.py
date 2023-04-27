@@ -84,7 +84,7 @@ class CyberDetect:
             
             analysis = self.model.analyze_tweet(msg, True)
             
-            self._insert_message(msg, "Analysis")
+            self._insert_message(analysis, "Analysis")
         
     def _insert_message(self, to_display, sender, left: bool = True):
         self.text_widget.configure(state=tk.NORMAL)
