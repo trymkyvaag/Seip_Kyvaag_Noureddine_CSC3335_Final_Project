@@ -43,7 +43,7 @@ class CyberDetect:
         head_label.pack(side=tk.TOP, fill=tk.X)
         
         # tiny divider
-        line = tk.Canvas(self.window, width=450, height=1, bg=WHITE)
+        line = tk.Canvas(self.window, width=515, height=1, bg=WHITE)
         line.pack(pady=5)
         
         # chat display area
