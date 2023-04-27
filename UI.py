@@ -93,9 +93,11 @@ class CyberDetect:
         # Underline hack.
         sender = sender + ' '
         
+        # Left aligns the text for display.
         if(left):
             sender = "\u0332".join(sender)
-            message = self.left_align(message)
+            message = self.align(message, True)
+        # Right aligns the text for display.
         else:
             orig_len = len(sender)
             sender = "\u0332".join(sender)
@@ -107,7 +109,7 @@ class CyberDetect:
                 
             sender = '%60s' % sender
             
-            message = self.right_align(message)
+            message = self.align(message, False)
             
         self.text_widget.insert(tk.END, sender + "\n")
         
@@ -116,7 +118,18 @@ class CyberDetect:
         self.text_widget.configure(state=tk.DISABLED)
         self.msg_entry.delete(0, tk.END)
         
-    def left_align(self, to_align: str):
+    def align(self, to_align: str, left: bool):
+        """
+        This function left/right aligns text for the GUI using a very disgusting feeling implementation.
+        I don't like that I did this.
+
+        Args:
+            to_align (str): The text to aling.
+            left (bool): To left align the text or not.
+
+        Returns:
+            str: Aligned text is returned.
+        """
         temp = to_align
         final = []
         
@@ -124,48 +137,29 @@ class CyberDetect:
         while(temp.startswith(' ') and len(temp) > 1):
             temp = temp[1:]
         
+        # Disgusting hard coded numbers!
         while(len(temp) > 40):
             curr_slice = temp[:40]
             temp = temp[40:]
             
             index = curr_slice.rfind(' ')
+            # Ew.
             if(index > -1 and index < 39):
                 temp = curr_slice[index:] + temp
+                curr_slice = curr_slice[:index]
             
+            # Gross!
+            if(not left):
+                curr_slice = '                    ' + curr_slice
             final.append(curr_slice)
         
             # Removes leading whitespace
             while(temp.startswith(' ') and len(temp) > 1):
                 temp = temp[1:]
         
-        final.append(temp)
-        
-        return '\n'.join(final)
-        
-    def right_align(self, to_align: str):
-        temp = to_align
-        final = []
-        
-        # Removes leading whitespace
-        while(temp.startswith(' ') and len(temp) > 1):
-            temp = temp[1:]
-        
-        while(len(temp) > 40):
-            curr_slice = temp[:40]
-            temp = temp[40:]
-            
-            index = curr_slice.rfind(' ')
-            if(index > -1 and index < 39):
-                temp = curr_slice[index:] + temp
-            
-            curr_slice = '                    ' + curr_slice
-            final.append(curr_slice)
-        
-            # Removes leading whitespace
-            while(temp.startswith(' ') and len(temp) > 1):
-                temp = temp[1:]
-        
-        temp = '                    ' + temp
+        # Bad!
+        if(not left):
+            temp = '                    ' + temp
         final.append(temp)
         
         return '\n'.join(final)
