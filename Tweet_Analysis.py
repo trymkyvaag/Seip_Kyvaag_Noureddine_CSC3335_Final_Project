@@ -27,9 +27,17 @@ class analyse_tweet():
     def analyze_tweet(self, tweet = str, print_readable = True):
         tweet = [[tweet]]
         lem_data = self.lda.lemmatization(tweet)
+
         new_corp = [self.lda.LDA_model.id2word.doc2bow(text) 
                     for text in lem_data]
         word_prob = self.lda.LDA_model[new_corp]
+
+         #HACK for now, since it has a lot of binding words
+        '''
+        tmp = list(word_prob[0][0][5])
+        tmp[1] = word_prob[0][0][5][1]/2
+        word_prob[0][0][5] = tuple(tmp)
+        '''
         print(f'The tweet {tweet} has the current breakdown\n')
         topic_str = self.__printable_topics__(word_prob, print_readable)
         return topic_str
@@ -74,5 +82,5 @@ class analyse_tweet():
 
 la = analyse_tweet(load_model=True)
 #la.print_all_topics()
-la.analyze_tweet('fat', print_readable=True)
+la.analyze_tweet('', print_readable=True)
 pass

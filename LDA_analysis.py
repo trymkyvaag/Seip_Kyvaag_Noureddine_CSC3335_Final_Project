@@ -108,7 +108,7 @@ class LDA_analysis():
                                            passes=200,
                                            alpha='auto',
                                            per_word_topics=True,
-                                           minimum_probability=0.015 # THis is not tested yet
+                                           minimum_probability=0.04 # Not tested 
                                            )
         self.LDA_model.save('lda.model')
         
