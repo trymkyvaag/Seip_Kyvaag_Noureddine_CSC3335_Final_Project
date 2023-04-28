@@ -39,6 +39,7 @@ class analyse_tweet():
             Turn topic probabilities to a human readable format 
             or print distrubutions for given tweet
         '''
+        to_return = ''
         
         if print_readable:   
             #Get topic and corresponding prob and print
@@ -47,16 +48,18 @@ class analyse_tweet():
                 Prob is decimal probability 
             '''
             topic_name_tuple, prob = self.__get_dominant_topic__(word_prob)
-            print(f'\nThis tweet look to fall under the category: {topic_name_tuple[0]}.')
+            to_return += f'\nThis tweet look to fall under the category: {topic_name_tuple[0]}.' + '\n'
 
             if topic_name_tuple[1]:
-                print(f'Since it falls under this category with {round(prob,2)}%, we recommend not to post it!')
+                to_return += f'Since it falls under this category with {round(prob,2)}%, we recommend not to post it!' + '\n'
             else:
-                print(f'\nWhat a lovely tweet. Could not agree more :)\nIt falls under the category with {round(prob,2)}%\n\n')
+                to_return += f'\nWhat a lovely tweet. Could not agree more :)\nIt falls under the category with {round(prob,2)}%\n\n'
+                
+            return
 
         else:
-            print('\n-----Print probabilites-----\n')
-            pprint(word_prob[0])
+            to_return += '\n-----Print probabilites-----\n'
+            to_return += word_prob[0]
 
     def __get_dominant_topic__(self, word_prob = gensim.interfaces.TransformedCorpus):
         most_probable_topic = 0
