@@ -91,17 +91,17 @@ class CyberDetect:
         self.text_widget.configure(state=tk.NORMAL)
         
         message = to_display
-        # Underline hack.
-        sender = sender + ' '
         
         # Left aligns the text for display.
         if(left):
             sender = "\u0332".join(sender)
+            sender += "\u0332"
             message = self.align(message, True)
         # Right aligns the text for display.
         else:
             orig_len = len(sender)
             sender = "\u0332".join(sender)
+            sender += "\u0332"
             
             # Makes it 60 characters long.
             while(orig_len < WIDTH):
