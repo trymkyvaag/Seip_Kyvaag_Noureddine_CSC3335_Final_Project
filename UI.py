@@ -19,6 +19,7 @@ WHITE = "#FFFFFF"
 BLUE = '#57C8FF'
 FONT = "Helvetica 14"
 FONT_BOLD = "Helvetica 13 bold"
+WIDTH = 60
 
 class CyberDetect:
     
@@ -51,7 +52,7 @@ class CyberDetect:
         chat_display_frame.pack(side=tk.TOP, padx=5, pady=5)
         chat_display_frame.configure(bg=BLACK)
         
-        self.text_widget = tk.Text(chat_display_frame, width=60, height=30, bg=BLACK, fg=WHITE,
+        self.text_widget = tk.Text(chat_display_frame, width=WIDTH, height=30, bg=BLACK, fg=WHITE,
                                     font='TkFixedFont', padx=10, pady=10)
         self.text_widget.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         self.text_widget.configure(cursor="arrow", state=tk.DISABLED)
@@ -103,7 +104,7 @@ class CyberDetect:
             sender = "\u0332".join(sender)
             
             # Makes it 60 characters long.
-            while(orig_len < 60):
+            while(orig_len < WIDTH):
                 orig_len += 1
                 sender = ' ' + sender
                 
@@ -130,6 +131,8 @@ class CyberDetect:
         Returns:
             str: Aligned text is returned.
         """
+        buffer = '                    '
+        two_thirds = int(WIDTH * (2/3))
         temp = to_align
         final = []
         
@@ -137,29 +140,41 @@ class CyberDetect:
         while(temp.startswith(' ') and len(temp) > 1):
             temp = temp[1:]
         
-        # Disgusting hard coded numbers!
-        while(len(temp) > 40):
-            curr_slice = temp[:40]
-            temp = temp[40:]
+        while(len(temp) > two_thirds):
+            curr_slice = temp[:two_thirds]
+            temp = temp[two_thirds:]
             
             index = curr_slice.rfind(' ')
             # Ew.
-            if(index > -1 and index < 39):
+            if(index > -1 and index < two_thirds - 1):
                 temp = curr_slice[index:] + temp
                 curr_slice = curr_slice[:index]
             
-            # Gross!
             if(not left):
-                curr_slice = '                    ' + curr_slice
+                curr_slice = buffer + curr_slice
+                # Removes trailing spaces.
+                while(curr_slice.endswith(' ')):
+                    curr_slice = curr_slice[:len(curr_slice) - 1]
+                    
+                # Right aligns the text.
+                while(len(curr_slice) < WIDTH):
+                    curr_slice = ' ' + curr_slice
+                
             final.append(curr_slice)
         
             # Removes leading whitespace
             while(temp.startswith(' ') and len(temp) > 1):
                 temp = temp[1:]
         
-        # Bad!
         if(not left):
-            temp = '                    ' + temp
+            temp = buffer + temp
+            # Removes trailing spaces.
+            while(temp.endswith(' ')):
+                temp = temp[:len(temp) - 1]
+                
+            # Right aligns the text.
+            while(len(temp) < WIDTH):
+                temp = ' ' + temp
         final.append(temp)
         
         return '\n'.join(final)
