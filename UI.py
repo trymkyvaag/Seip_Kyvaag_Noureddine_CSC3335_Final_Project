@@ -48,16 +48,16 @@ class CyberDetect:
         line.pack(pady=5)
         
         # chat display area
-        chat_display_frame = tk.Frame(self.window)
-        chat_display_frame.pack(side=tk.TOP, padx=5, pady=5)
-        chat_display_frame.configure(bg=BLACK)
+        self.chat_display_frame = tk.Frame(self.window)
+        self.chat_display_frame.pack(side=tk.TOP, padx=5, pady=5)
+        self.chat_display_frame.configure(bg=BLACK)
         
-        self.text_widget = tk.Text(chat_display_frame, width=WIDTH, height=30, bg=BLACK, fg=WHITE,
+        self.text_widget = tk.Text(self.chat_display_frame, width=WIDTH, height=30, bg=BLACK, fg=WHITE,
                                     font='TkFixedFont', padx=10, pady=10)
         self.text_widget.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         self.text_widget.configure(cursor="arrow", state=tk.DISABLED)
         
-        scrollbar = tk.Scrollbar(chat_display_frame)
+        scrollbar = tk.Scrollbar(self.chat_display_frame)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         scrollbar.config(command=self.text_widget.yview)
         self.text_widget.config(yscrollcommand=scrollbar.set)
@@ -69,6 +69,7 @@ class CyberDetect:
         
         self.msg_entry = tk.Entry(msg_entry_frame, bg=GRAY, fg=WHITE, font=FONT)
         self.msg_entry.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=10, pady=10)
+        self.msg_entry.configure(insertbackground=WHITE)
         self.msg_entry.focus()
         self.msg_entry.bind("<Return>", self._on_enter_pressed)
         
@@ -80,12 +81,17 @@ class CyberDetect:
     def _on_enter_pressed(self, event):
         msg = self.msg_entry.get()
         if(re.sub(' ', '', msg) != ''):
-        #     self._insert_message(data.clean_tweet(msg), "Tweet")
+            # Inserts the tweet.
             self._insert_message(msg, "Tweet", False)
             
+            # Analyzes the tweet.
             analysis = self.model.analyze_tweet(msg, True)
             
+            # Inserts the analysis.
             self._insert_message(analysis, "Analysis")
+            
+            # Scrolls to the bottom of the page.
+            self.text_widget.yview_moveto(1)
         
     def _insert_message(self, to_display, sender, left: bool = True):
         self.text_widget.configure(state=tk.NORMAL)
@@ -145,7 +151,7 @@ class CyberDetect:
             temp = temp[two_thirds:]
             
             index = curr_slice.rfind(' ')
-            # Ew.
+            
             if(index > -1 and index < two_thirds - 1):
                 temp = curr_slice[index:] + temp
                 curr_slice = curr_slice[:index]
