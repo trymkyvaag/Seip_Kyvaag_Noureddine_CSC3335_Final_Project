@@ -48,18 +48,18 @@ class analyse_tweet():
                 Prob is decimal probability 
             '''
             topic_name_tuple, prob = self.__get_dominant_topic__(word_prob)
-            to_return += f'\nThis tweet look to fall under the category: {topic_name_tuple[0]}.' + '\n'
+            to_return += f'This tweet look to fall under the category: {topic_name_tuple[0]}.' + '\n'
 
             if topic_name_tuple[1]:
                 to_return += f'Since it falls under this category with {round(prob,2)}%, we recommend not to post it!' + '\n'
             else:
                 to_return += f'\nWhat a lovely tweet. Could not agree more :)\nIt falls under the category with {round(prob,2)}%\n\n'
-                
-            return
 
         else:
             to_return += '\n-----Print probabilites-----\n'
             to_return += word_prob[0]
+            
+        return to_return
 
     def __get_dominant_topic__(self, word_prob = gensim.interfaces.TransformedCorpus):
         most_probable_topic = 0
