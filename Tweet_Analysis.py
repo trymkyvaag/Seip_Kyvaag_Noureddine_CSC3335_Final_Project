@@ -48,7 +48,7 @@ class analyse_tweet():
                 Prob is decimal probability 
             '''
             topic_name_tuple, prob = self.__get_dominant_topic__(word_prob)
-            to_return += f'This tweet looks to fall under the category: {topic_name_tuple[0]}. '
+            to_return += f'This tweet looks to fall under the category: [{topic_name_tuple[0]}].\n'
 
             if topic_name_tuple[1]:
                 to_return += f'Since it falls under this category with {round(prob,2)}% probability, we recommend not posting it! '
