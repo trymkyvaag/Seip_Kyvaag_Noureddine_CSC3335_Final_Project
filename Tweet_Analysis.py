@@ -30,7 +30,7 @@ class analyse_tweet():
         new_corp = [self.lda.LDA_model.id2word.doc2bow(text) 
                     for text in lem_data]
         word_prob = self.lda.LDA_model[new_corp]
-        print(f'The tweet {tweet} has the current breakdown\n')
+        # print(f'The tweet {tweet} has the current breakdown\n')
         topic_str = self.__printable_topics__(word_prob, print_readable)
         return topic_str
     
