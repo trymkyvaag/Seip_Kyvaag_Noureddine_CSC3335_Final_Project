@@ -60,5 +60,5 @@ class Response_generator():
         
 
     def get_response(self, topic_number): 
-        r = randint(0,len(self.responses[topic_number]))
+        r = randint(0,len(self.responses[topic_number])-1)
         return self.responses[topic_number][r]
