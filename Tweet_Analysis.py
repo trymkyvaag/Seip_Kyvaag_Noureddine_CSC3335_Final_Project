@@ -4,11 +4,13 @@ from pprint import pprint
 import pandas as pd 
 import pickle
 import gensim
+from Response_Array import Response_generator
 
 class analyse_tweet():
 
     def __init__(self,load_model = True) -> None:
         self.lda = LDA_analysis(load_model)
+        self.response_genrator = Response_generator()
         #self.print_all_topics()
         self.corpus = pickle.load(open("corpus.p", "rb"))
         '''
@@ -48,13 +50,15 @@ class analyse_tweet():
                 Topic_tuple is ("name of topic", 1/0 (offensice or not)) a
                 Prob is decimal probability 
             '''
+            
             topic_name_tuple, prob = self.__get_dominant_topic__(word_prob)
+            to_return += self.response_genrator.get_response(topic_name_tuple[1]) + '\n'
             to_return += f'This tweet looks to fall under the category: [{topic_name_tuple[0]}].'
 
             if topic_name_tuple[1]:
-                to_return += f'Since it falls under this category with {round(prob,2)}% probability, we recommend not posting it! '
+                to_return += f'This falls under this category with {round(prob,2)}% '
             else:
-                to_return += f'What a lovely tweet. Could not agree more :). It falls under the category with {round(prob,2)}% probability. '
+                to_return += f'It falls under the category with {round(prob,2)}% probability. '
 
         else:
             to_return += '\n-----Print probabilites-----\n'
@@ -80,7 +84,6 @@ class analyse_tweet():
         pprint(self.lda.LDA_model.show_topics())
 
 la = analyse_tweet(load_model=True)
-la.analyze_tweet('You are looking very nice today', print_readable=True)
-la.analyze_tweet('You are looking very nice today', print_readable=False)
+la.analyze_tweet('I hate all people from Norway. Why do they stink???', print_readable=True)
 
 # pass
