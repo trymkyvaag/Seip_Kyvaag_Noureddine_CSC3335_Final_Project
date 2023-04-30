@@ -6,6 +6,7 @@ CSC 3335
 In order to run our project, first run `pip install -r requirements.txt`. Once that operation has finished, launch `UI.py`.
 
 We obtained our data sets from the following sources:
+
 [Cyberbullying Dataset, owed to Saurabh Shahane](https://www.kaggle.com/datasets/saurabhshahane/cyberbullying-dataset)
 
 [Cyberbullying Classification, owed to Shaurya Panpalia](https://www.kaggle.com/datasets/shauryapanpalia/cyberbullying-classification)
