@@ -35,7 +35,7 @@ class LDA_analysis():
             self.__complexity__()
             #self.test()
         else:
-            print('\n\n\t-----Using saved model and corpus----\n')
+            print('\n\n-----Using saved model and corpus----\n')
            # self.ta_class = Toakanize()
            # self.__clean__()
             self.num_topics = 8

@@ -31,14 +31,7 @@ class analyse_tweet():
         new_corp = [self.lda.LDA_model.id2word.doc2bow(text) 
                     for text in lem_data]
         word_prob = self.lda.LDA_model[new_corp]
-
-         #HACK for now, since it has a lot of binding words
-        '''
-        tmp = list(word_prob[0][0][5])
-        tmp[1] = word_prob[0][0][5][1]/2
-        word_prob[0][0][5] = tuple(tmp)
-        '''
-        print(f'The tweet {tweet} has the current breakdown\n')
+        # print(f'The tweet {tweet} has the current breakdown\n')
         topic_str = self.__printable_topics__(word_prob, print_readable)
         return topic_str
     
@@ -47,6 +40,7 @@ class analyse_tweet():
             Turn topic probabilities to a human readable format 
             or print distrubutions for given tweet
         '''
+        to_return = ''
         
         if print_readable:   
             #Get topic and corresponding prob and print
@@ -55,16 +49,18 @@ class analyse_tweet():
                 Prob is decimal probability 
             '''
             topic_name_tuple, prob = self.__get_dominant_topic__(word_prob)
-            print(f'\nThis tweet look to fall under the category: {topic_name_tuple[0]}.')
+            to_return += f'This tweet looks to fall under the category: [{topic_name_tuple[0]}].'
 
             if topic_name_tuple[1]:
-                print(f'Since it falls under this category with {round(prob,2)}%, we recommend not to post it!')
+                to_return += f'Since it falls under this category with {round(prob,2)}% probability, we recommend not posting it! '
             else:
-                print(f'\nWhat a lovely tweet. Could not agree more :)\nIt falls under the category with {round(prob,2)}%\n\n')
+                to_return += f'What a lovely tweet. Could not agree more :). It falls under the category with {round(prob,2)}% probability. '
 
         else:
-            print('\n-----Print probabilites-----\n')
-            pprint(word_prob[0])
+            to_return += '\n-----Print probabilites-----\n'
+            to_return += word_prob[0]
+            
+        return to_return
 
     def __get_dominant_topic__(self, word_prob = gensim.interfaces.TransformedCorpus):
         most_probable_topic = 0
@@ -80,7 +76,6 @@ class analyse_tweet():
         '''
         pprint(self.lda.LDA_model.show_topics())
 
-la = analyse_tweet(load_model=True)
-#la.print_all_topics()
-la.analyze_tweet('', print_readable=True)
-pass
+# la = analyse_tweet(load_model=True)
+#la.analyze_tweet('want block name care hear help')
+# pass
