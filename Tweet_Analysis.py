@@ -58,13 +58,16 @@ class analyse_tweet():
 
         else:
             to_return += '\n-----Print probabilites-----\n'
-            to_return += word_prob[0]
+            pprint(word_prob[0])
             
+        print(to_return)
         return to_return
 
     def __get_dominant_topic__(self, word_prob = gensim.interfaces.TransformedCorpus):
         most_probable_topic = 0
-        for entry in word_prob[0][0]:
+        topic_list = [list(element) for element in word_prob[0][0]]
+        topic_list[5][1] = topic_list[5][1]/2
+        for entry in topic_list:
             if entry[1] > most_probable_topic:
                 most_probable_topic = entry[1]
                 e = entry
@@ -76,6 +79,8 @@ class analyse_tweet():
         '''
         pprint(self.lda.LDA_model.show_topics())
 
-# la = analyse_tweet(load_model=True)
-#la.analyze_tweet('want block name care hear help')
+la = analyse_tweet(load_model=True)
+la.analyze_tweet('You are looking very nice today', print_readable=True)
+la.analyze_tweet('You are looking very nice today', print_readable=False)
+
 # pass
