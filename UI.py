@@ -1,9 +1,22 @@
 import tkinter as tk
+from tkinter import ttk
 
-BG_COLOR = "#0E1111"
-TEXT_COLOR = "#FFFFFF"
+BG_COLOR = "#292828"
+TEXT_COLOR = "#33FFF2"
 FONT = "Helvetica 14"
 FONT_BOLD = "Helvetica 13 bold"
+
+class ChatBubble(tk.Canvas):
+    def __init__(self, parent, width, height, corner_radius, color, align):
+        super().__init__(parent, bg=parent["bg"], highlightthickness=0)
+        self._create_polygon(width, height, corner_radius, align, color)
+
+    def _create_polygon(self, width, height, corner_radius, align, color):
+        if align == "left":
+            points = [corner_radius, 0, width, 0, width, height, corner_radius, height, 0, height // 2]
+        else:
+            points = [0, 0, width - corner_radius, 0, width, height // 2, width - corner_radius, height, 0, height]
+        self.create_polygon(points, fill=color, outline=color)
 
 class CyberDetect:
     
@@ -54,8 +67,9 @@ class CyberDetect:
         self.msg_entry.bind("<Return>", self._on_enter_pressed)
         
         # send button
-        send_button = tk.Button(msg_entry_frame, text="Submit", font=FONT_BOLD, width=20, bg=TEXT_COLOR, fg=BG_COLOR,
-                                command=lambda: self._on_enter_pressed(None))
+        style = ttk.Style()
+        style.configure("Rounded.TButton", borderwidth=0, relief="flat", background=TEXT_COLOR, foreground=BG_COLOR, font=FONT_BOLD, padding=6, width=20, anchor="center", borderradius=36)
+        send_button = ttk.Button(msg_entry_frame, text="Submit", style="Rounded.TButton", command=lambda: self._on_enter_pressed(None))
         send_button.pack(side=tk.LEFT, padx=10, pady=10)
      
     def _on_enter_pressed(self, event):
