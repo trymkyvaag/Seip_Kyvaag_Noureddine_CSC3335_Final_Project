@@ -84,6 +84,7 @@ class analyse_tweet():
         pprint(self.lda.LDA_model.show_topics())
 
 la = analyse_tweet(load_model=True)
-la.analyze_tweet('I hate all people from Norway. Why do they stink???', print_readable=True)
+la.analyze_tweet('I hate all canadians', print_readable=True)
+la.analyze_tweet('I hate all canadians', print_readable=False)
 
 # pass
