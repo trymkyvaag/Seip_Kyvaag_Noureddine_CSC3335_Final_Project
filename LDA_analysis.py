@@ -55,7 +55,7 @@ class LDA_analysis():
         return [self.trigram_mod[self.bigram_mod[doc]] for doc in texts]
 
     def lemmatization(self,texts, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV']):
-        print('-----Tagging words-----\n')
+        print('\n-----Tagging words-----\n')
         """https://spacy.io/api/annotation"""
         texts_out = []
         for sent in texts:
