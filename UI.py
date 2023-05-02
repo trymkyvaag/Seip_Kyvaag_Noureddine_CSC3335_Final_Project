@@ -187,4 +187,5 @@ class CyberDetect:
 
 if __name__ == "__main__":
     app = CyberDetect()
+    app._insert_message("Welcome to the Tweet Analyzer, I hope you are having a good day!", "Analysis")
     app.run()
