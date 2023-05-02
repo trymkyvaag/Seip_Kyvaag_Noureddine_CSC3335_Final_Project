@@ -19,6 +19,7 @@ WHITE = "#FFFFFF"
 BLUE = '#57C8FF'
 FONT = "Helvetica 14"
 FONT_BOLD = "Helvetica 13 bold"
+WIDTH = 60
 
 class CyberDetect:
     
