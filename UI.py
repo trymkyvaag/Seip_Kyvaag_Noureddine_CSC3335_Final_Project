@@ -20,6 +20,7 @@ BLUE = '#57C8FF'
 FONT = "Helvetica 14"
 FONT_BOLD = "Helvetica 13 bold"
 WIDTH = 60
+NG = "never gonna"
 
 class CyberDetect:
     
@@ -29,6 +30,7 @@ class CyberDetect:
         
         self.window = tk.Tk()
         self._setup_main_window()
+        self.ng_counter = 0
         
     def run(self):
         self.window.mainloop()
@@ -81,15 +83,18 @@ class CyberDetect:
     def _on_enter_pressed(self, event):
         msg = self.msg_entry.get()
         if(re.sub(' ', '', msg) != ''):
-            # Inserts the tweet.
-            self._insert_message(msg, "Tweet", False)
+            if(msg.lower() == NG):
+                self.handle_ng(msg)
+            else:
+                # Inserts the tweet.
+                self._insert_message(msg, "Tweet", False)
             
-            # Analyzes the tweet.
-            analysis = self.model.analyze_tweet(msg, True)
-            
-            # Inserts the analysis.
-            self._insert_message(analysis, "Analysis")
-            
+                # Analyzes the tweet.
+                analysis = self.model.analyze_tweet(msg, True)
+                
+                # Inserts the analysis.
+                self._insert_message(analysis, "Analysis")
+                
             # Scrolls to the bottom of the page.
             self.text_widget.yview_moveto(1)
         
@@ -184,6 +189,30 @@ class CyberDetect:
         final.append(temp)
         
         return '\n'.join(final)
+    
+    def ng_plus(self):
+        self.ng_counter = (self.ng_counter + 1) % 6
+        
+    def handle_ng(self, msg):
+        # Inserts the tweet.
+        self._insert_message(msg, "Rick", False)
+        
+        match(self.ng_counter):
+            case 0:
+                self._insert_message("give you up.", "Astley")
+            case 1:
+                self._insert_message("let you down.", "Astley")
+            case 2:
+                self._insert_message("run around and                                               desert you.", "Astley")
+            case 3:
+                self._insert_message("make you cry.", "Astley")
+            case 4:
+                self._insert_message("say goodbye.", "Astley")
+            case 5:
+                self._insert_message("tell a lie                                                   and hurt you.", "Astley")
+        
+        self.ng_plus()
+        
 
 if __name__ == "__main__":
     app = CyberDetect()
