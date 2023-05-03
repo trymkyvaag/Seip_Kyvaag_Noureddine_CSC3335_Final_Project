@@ -64,7 +64,7 @@ class analyse_tweet():
             to_return += '\n-----Print probabilites-----\n'
             pprint(word_prob[0])
             
-        print(to_return)
+        # print(to_return)
         return to_return
 
     def __get_dominant_topic__(self, word_prob = gensim.interfaces.TransformedCorpus):
