@@ -1,5 +1,7 @@
+import pickle
 from Toakanize import Toakanize
 import spacy
+import nltk
 #nltk.download(), must be ran once
 from pprint import pprint
 #https://www.machinelearningplus.com/nlp/topic-modeling-gensim-python/
@@ -22,7 +24,8 @@ stop_words = stopwords.words('english')
 stop_words.extend(['from', 'subject', 're', 'edu', 'use'])
 
 class LDA_analysis():
-    def __init__(self, load_model = False) -> None:
+    def __init__(self, load_model) -> None:
+        self.nlp = spacy.load("en_core_web_sm")
         if not load_model:
             self.ta_class = Toakanize()
             self.__create_ngrams__()
@@ -30,8 +33,11 @@ class LDA_analysis():
             self.__create_word_dict__()
             self.__LDA__(8)
             self.__complexity__()
-            self.test()
+            #self.test()
         else:
+            print('\n\n-----Using saved model and corpus----\n')
+           # self.ta_class = Toakanize()
+           # self.__clean__()
             self.num_topics = 8
             self.LDA_model = self.load_model()
 
@@ -49,7 +55,7 @@ class LDA_analysis():
         return [self.trigram_mod[self.bigram_mod[doc]] for doc in texts]
 
     def lemmatization(self,texts, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV']):
-        print('-----Tagging words-----\n')
+        print('\n-----Tagging words-----\n')
         """https://spacy.io/api/annotation"""
         texts_out = []
         for sent in texts:
@@ -63,17 +69,18 @@ class LDA_analysis():
         self.bigram_mod = gensim.models.phrases.Phraser(self.bigram)
         self.trigram_mod = gensim.models.phrases.Phraser(self.trigram)
 
-    def __clean__(self):
+    def __clean__(self, loaded_model = True):
         print('\n-----Cleaning tweets-----\n')
-        # Remove Stop Words
+   
+            # Remove Stop Words
         self.data_words_nostops = self.remove_stopwords(self.ta_class.toakanized_data)
 
-        # Form Bigrams
+            # Form Bigrams
         self.data_words_bigrams = self.make_bigrams(self.data_words_nostops)
 
         # Initialize spacy 'en' model, keeping only tagger component (for efficiency)
         # python3 -m spacy download en
-        self.nlp = spacy.load("en_core_web_sm")
+        #self.nlp = spacy.load("en_core_web_sm")
 
         # Do lemmatization keeping only noun, adj, vb, adv
         print('-----Lemmaztion only NN, A, V, AV -----\n')
@@ -88,6 +95,7 @@ class LDA_analysis():
 
         # Term Document Frequency
         self.corpus = [self.id2word.doc2bow(text) for text in texts]
+        pickle.dump(self.corpus, open("corpus.p", "wb")) 
 
     def __LDA__(self, num_topics):
         self.num_topics = num_topics
@@ -96,10 +104,12 @@ class LDA_analysis():
                                            num_topics=self.num_topics, 
                                            random_state=100,
                                            update_every=1,
-                                           chunksize=2000,
-                                           passes=50,
+                                           chunksize=50000,
+                                           passes=200,
                                            alpha='auto',
-                                           per_word_topics=True)
+                                           per_word_topics=True,
+                                           minimum_probability=0.04 # Not tested 
+                                           )
         self.LDA_model.save('lda.model')
         
     def load_model(self):
