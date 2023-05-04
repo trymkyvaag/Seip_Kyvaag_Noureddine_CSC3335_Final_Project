@@ -21,8 +21,14 @@ class analyse_tweet():
             Named topic for LDA model as of Apr 27th 11:28 am
             0 is an ok topic, 1 is likely offensice
         '''
-        self.topic_names = [('Normal conversation', 0),('Gender based harrasment', 1),('Political conflicts and terrorism', 1)
-                            ,('Hate speech and discrimination', 1),('Racism/sexism', 1),('Encouragment', 0),('Religious harrasment and threaths ', 1),('Homophobia/Abelism', 1)] #make array of topic description
+        self.topic_names = [('Normal conversation', 0),
+                            ('Gender based harrasment', 1),
+                            ('Islamophobia', 1),
+                            ('Hate speech and discrimination', 1),
+                            ('Racism/sexism', 1),
+                            ('Encouragment', 0),
+                            ('Religious harrasment and threats ', 1),
+                            ('Homophobia/Abelism', 1)] #make array of topic description
 
         pass
 
